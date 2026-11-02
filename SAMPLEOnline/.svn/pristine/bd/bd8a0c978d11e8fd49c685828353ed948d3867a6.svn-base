@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.MsgMapper">
+
+<!-- TB_ICBETM02(메시지코드관리) 테이블 SQL -->
+	<select id="selectMsgList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Msg_Sql.selectMsgList 메시지코드 조회  */
+		UNTY_MSG_NO,								/* 통합메시지번호 */
+		UNTY_MSG_CNTNT,								/* 통합메시지내용 */
+		USE_YN,										/* 사용여부 */
+		'99999999' AS REGNT_ENO,					/* 등록자사번 */
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS REG_DTM,	/* 등록일시 */
+		'99999999' AS TRTR_ENO,						/* 처리자사번 */
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM		/* 처리일시 */
+		FROM EAGLE.TB_CISSS99	/* 메세지코드관리 */
+		ORDER BY UNTY_MSG_NO
+		]]>
+	</select>
+	<select id="selectUseMsgList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Msg_Sql.selectUseMsgList 사용자 메시지코드 조회  */
+			UNTY_MSG_NO,							/* 통합메시지번호 */
+			UNTY_MSG_CNTNT,							/* 통합메시지내용 */
+			USE_YN,									/* 사용여부 */
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		FROM EAGLE.TB_CISSS99	/* [유지]통합메시지기본통계 */
+		WHERE USE_YN = 'Y'
+		]]>
+	</select>
+	
+	<select id="selectMsgListByKeywords" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Msg_Sql.selectMsgListByKeywords 메시지코드 조회  */
+		UNTY_MSG_NO,								/* 통합메시지번호 */
+		UNTY_MSG_CNTNT,								/* 통합메시지내용 */ 
+		USE_YN,                                     /* 사용여부 */    
+		'99999999' AS REGNT_ENO,                    /* 등록자사번 */   
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS REG_DTM,    /* 등록일시 */    
+		'99999999' AS TRTR_ENO,                     /* 처리자사번 */   
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM     /* 처리일시 */    
+		FROM EAGLE.TB_CISSS99	/* 메세지코드관리 */
+		WHERE UNTY_MSG_NO LIKE '%' || #{untyMsgNo} || '%' AND UNTY_MSG_CNTNT LIKE '%' || #{untyMsgCntnt} ||'%'
+		ORDER BY UNTY_MSG_NO
+		]]>
+	</select>
+	
+	<!-- TB_CISSS99 통합메시지기본통계(기간계) 테이블 Select SQL -->
+	<select id="selectMsgStatList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Msg_Sql.selectMsgStatList 통합메시지코드 조회  */
+		UNTY_MSG_NO,							/* 통합메시지번호 */ 
+		UNTY_MSG_CNTNT,                         /* 통합메시지내용 */ 
+		USE_YN,                                 /* 사용여부 */    
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		FROM EAGLE.TB_CISSS99	/* [유지]통합메시지기본통계 */
+		ORDER BY UNTY_MSG_NO
+		]]>
+	</select>
+	
+	<select id="selectMsgStatListByKeywords" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Msg_Sql.selectMsgStatListByKeywords 통합메시지코드 조회  */
+		UNTY_MSG_NO,							/* 통합메시지번호 */ 
+		UNTY_MSG_CNTNT,                         /* 통합메시지내용 */ 
+		USE_YN,                                 /* 사용여부 */    
+		TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM /* 처리일시 */    
+		FROM EAGLE.TB_CISSS99	/* [유지]통합메시지기본통계 */	
+		WHERE UNTY_MSG_NO LIKE '%' || #{untyMsgNo} || '%' AND UNTY_MSG_CNTNT LIKE '%' || #{untyMsgCntnt} ||'%'
+		ORDER BY UNTY_MSG_NO
+		]]>
+	</select>
+	
+
+	<insert id="insertMsgInfo" parameterType="map">
+		<![CDATA[
+		INSERT /* Msg_Sql.insertMsgInfo 메시지코드 저장  */
+		INTO S_CB.TB_ICBETM02	/* 메세지코드관리 */
+		(
+		UNTY_MSG_NO,	/* 통합메시지번호 */ 
+		UNTY_MSG_CNTNT, /* 통합메시지내용 */ 
+		USE_YN,         /* 사용여부 */    
+		REGNT_ENO,      /* 등록자사번 */   
+		REG_DTM,        /* 등록일시 */    
+		TRTR_ENO,       /* 처리자사번 */   
+		TRT_DTM         /* 처리일시 */    
+		)
+		VALUES
+		(
+		    #{untyMsgNo},
+		    #{untyMsgCntnt},
+		    #{useYn},
+		    #{regntEno},
+		    CURRENT_TIMESTAMP,
+		    #{trtrEno},
+		    CURRENT_TIMESTAMP
+		)
+		]]>
+	</insert>
+
+	<update id="updateMsgInfo" parameterType="map">
+		<![CDATA[
+		UPDATE  /* Msg_Sql.updateMsgInfo 메시지코드 저장  */ 
+		S_CB.TB_ICBETM02	/* 메세지코드관리 */
+		SET
+		    UNTY_MSG_NO = #{untyMsgNo},
+		    UNTY_MSG_CNTNT = #{untyMsgCntnt},
+		    USE_YN = #{useYn},
+		    REGNT_ENO = #{regntEno},
+		    TRTR_ENO = #{trtrEno},
+		    TRT_DTM = CURRENT_TIMESTAMP
+		WHERE UNTY_MSG_NO = #{untyMsgNo}
+		]]>
+	</update>
+
+	<delete id="deleteMsgInfo" parameterType="map">
+		<![CDATA[
+		DELETE /* Msg_Sql.updateMsgInfo 메시지코드 삭제  */  
+		FROM S_CB.TB_ICBETM02	/* 메세지코드관리 */
+		WHERE UNTY_MSG_NO = #{untyMsgNo}
+		]]>
+	</delete>
+	
+</mapper>

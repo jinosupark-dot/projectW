@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!--- Section -->
+<section> 
+  
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">분개룰 관리</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap-d">
+        <div class="search-item">
+          <!-- 1row -->
+          <div class="search-item-inner">
+            <div class="item wi290px">
+              <p class="title">업무구분</p>
+              <div>
+                <select>
+                  <option>_20_l4조정</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">거래유형</p>
+              <div>
+                <select>
+                  <option>_21003_잔여BEL_실효비금</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">금액구분</p>
+              <div>
+                <select>
+                  <option>3072121_기초_보험계약부채_잔여(BE(L))_손실(회수)요소</option>
+                </select>
+              </div>
+            </div>            
+          </div>
+          <!-- 1row -->
+          <!-- 2row -->
+          <div class="search-item-inner">
+            <div class="item wi290px">
+              <p class="title">세부금액구분</p>
+              <div>
+                <select>
+                  <option>10:N1원장 계정구분코드</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">세부금액상세구분</p>
+              <div>
+                <select>
+                  <option>3535005193:지급보험금-최저보증비용(종신사망보험금-seed money)</option>
+                </select>
+              </div>
+            </div>
+           </div>
+           <!-- 2row -->         
+          </div>
+          <div class="search-item-btn"> 
+            <!--row 갯수가 2줄일 경우 class="p2",  -->
+            <a href="javascript:void(0);" class="p2"><i class="xi-search xi-x"></i> 조회</a> 
+          </div>
+        </div>
+        
+      <!-- searchform // --> 
+    </div>
+    <!-- btn -->
+    <div class="btnWrap txtar"> 
+      <button type="button" class="btn-xlsdown"><span>엑셀다운로드</span></button>
+      <button type="button" class="btn-upload"><span>엑셀업로드</span></button>
+    </div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th colspan="2">업무구분</th>
+            <th colspan="2">거래유형</th>
+            <th colspan="2">금액구분</th>
+            <th rowspan="2">발생사고부채<br/>구분코드</th>
+            <th rowspan="2">Seq</th>
+            <th colspan="2">차대</th>
+            <th colspan="2">계정과목</th>
+            <th rowspan="2">계정index</th>
+            <th rowspan="2">환입여부</th>
+            <th rowspan="2">환입계정과항목코드</th>
+            <th rowspan="2">분기말확정여부</th>
+            <th rowspan="2">부호<br/>(+/-)</th>
+            <th rowspan="2">유효개시일자</th>
+            <th rowspan="2">유효종료일자</th>
+          </tr>
+          <tr>
+          	<th>코드</th>
+          	<th>명칭</th>
+          	<th>코드</th>
+          	<th>명칭</th>
+          	<th>코드</th>
+          	<th>명칭</th>
+          	<th>코드</th>
+          	<th>명칭</th>
+          	<th>코드</th>
+          	<th>명칭</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          	<td class="txtar">21</td>
+            <td>I17</td>
+            <td class="txtar">21001</td>
+            <td>원수BEL</td>
+            <td class="txtar">101002</td>
+            <td>AOCI환입금액_환율</td>
+            <td class="txtar">99</td>
+            <td class="txtar">1</td>
+            <td class="txtar">40</td>
+            <td>차변(40)</td>
+            <td class="txtar">482102010</td>
+            <td>보험AOCI_잔여(BE(L))환율효과</td>
+            <td>AOCI</td>
+            <td>Y</td>
+            <td class="txtar">4821020103</td>
+            <td>N</td>
+            <td>+</td>
+            <td>2021-01-01</td>
+            <td>9999-99-99</td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!-- table // --> 
+   
+   <!--분개율입력/수정/삭제-->
+   <div class="main_title clearfix mt50">
+        <h3 class="title">분개룰 입력/수정/삭제</h3>
+    </div>
+    <div class="tableWrap">
+    	<table class="table-detail">        
+    		<tbody>
+    			<tr>
+    				<th>업무구분<spaan class="point">*</span></th>
+    				<td>
+    					<div>
+    						<select>
+    							<option>_20_l4 조정<option>
+    						</select>
+    					</div>
+            </td>
+            <th>거래유형<span class="point">*</span></th>
+            <td colspan="3">
+              <div>
+                <select>
+                  <option>
+                    _21003잔여_BEL_실효비금
+                  </option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            
+            <th>금액구분<span class="point">*</span></th>
+            <td>
+              <div>
+                <select>
+                  <option>
+                  _101067_계리가정변경효과산출기준 최종원가 BEL금액
+                  </option>
+                </select>
+              </div>
+            </td>
+            <th>
+              세부금액구분<span class="point">*</span>
+            </th>
+            <td>
+              <div>
+                <select>
+                  <option>
+                  _99_구분없음
+                  </option>
+                </select>
+              </div>
+            </td>
+            <th>
+              세부금액상세구분<span class="point">*</span>
+            </th>
+            <td>
+              <div>
+                <select>
+                  <option>
+                  5350005193 : 지급보험금-최저보증비용
+                  </option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>차대</th>
+            <td>
+              <div>
+                <select>
+                  <option>
+                  40:차변
+                  </option>
+                </select>
+              </div>
+            </td>
+            <th>계정과목</th>
+            <td>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+                <input type="text" style="width:200px" class="fl mr5">
+              </div>
+            </td>
+            <th>계정index</th>
+            <td>
+              <div>
+                <select>
+                  <option>
+                      AOCI
+                  </option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>환입유부</th>
+            <td>
+              <div>
+                <select>
+                  <option>Y</option>
+                </select>
+              </div>
+            </td>
+            <th>환입계정과목</th>
+            <td>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+                <input type="text" style="width:200px" class="fl mr5">
+              </div>
+            </td>
+            <th>분기말확정영부</th>
+            <td>
+              <div>
+                <select>
+                  <option>Y</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>부호</th>
+            <td>
+              <div>
+                <select>
+                  <option>Y</option>
+                </select>
+              </div>
+            </td>
+            <th>
+              유효개시일자
+            </th>
+            <td>
+              <div class="cal-group">
+                 <input id="inp_closeYm" type="text" class="cal-input form-control datepicker month" onblur="this.value = $.fn.monthFormat(this.value);">
+                 <button class="cal" onclick="$('#inp_closeYm').datepicker('show');" ><img src="/img/icon_cal"></button>
+               </div>        
+            </td>
+            <th>
+              유효종료일자
+            </th>
+            <td>
+              <div class="cal-group">
+                <input id="inp_closeYm" type="text" class="cal-input form-control datepicker month" onblur="this.value = $.fn.monthFormat(this.value);">
+                <button class="cal" onclick="$('#inp_closeYm').datepicker('show');" ><img src="/img/icon_cal"></button>
+              </div>
+            
+            </td>
+          </tr>
+    		<tbody>
+        </table>
+    
+    </div>
+    <!--분개율입력/수정/삭제-->
+    <!-- btn -->
+    <div class="btnWrap txtar">
+      <button class="btn-save"><span>저장</span></button>
+      <button class="blue_btn"><span>삭제</span></button>
+      <button class="blue_btn "><span>초기화</span></button>
+    </div>
+    <!-- btn//--> 
+  </div>
+  <!-- content01//--> 
+</section>
+<!--- Section -->
+
+</body>
+</html>

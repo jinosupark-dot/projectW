@@ -1,0 +1,192 @@
+package kr.co.wllife.ifrs17.config;
+
+import fwk.com.cmm.interceptor.HistoryInterceptor;
+import fwk.com.cmm.interceptor.LoginInterceptor;
+import fwk.com.cmm.web.EgovBindingInitializer;
+import fwk.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager;
+import fwk.com.cmm.web.EgovImgPaginationRenderer;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Locale;
+
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class WebConfig implements WebMvcConfigurer {
+
+    // ==========================================
+    // 1. View Resolvers (BeanNameViewResolver & JSP)
+    // ==========================================
+    
+    /**
+     * 뷰 이름("jsonView")과 일치하는 빈을 최우선(Order 0)으로 찾아주는 Resolver
+     */
+    @Bean
+    public BeanNameViewResolver beanNameViewResolver() {
+        BeanNameViewResolver resolver = new BeanNameViewResolver();
+        resolver.setOrder(0);
+        return resolver;
+    }
+
+    /**
+     * jsonView 빈 설정
+     */
+    @Bean(name = "jsonView")
+    public MappingJackson2JsonView jsonView() {
+        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+        jsonView.setContentType("application/json;charset=UTF-8");
+        return jsonView;
+    }
+
+    /**
+     * JSP ViewResolver 설정 (Order 1)
+     */
+    @Bean
+    public InternalResourceViewResolver jspViewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setOrder(1);
+        resolver.setViewClass(JstlView.class);
+        resolver.setPrefix("/WEB-INF/jsp/ifrs17/");
+        resolver.setSuffix(".jsp");
+        resolver.setContentType("text/plain;charset=UTF-8"); // 기존 설정 유지를 원할 때 사용
+        return resolver;
+    }
+
+    // ==========================================
+    // 2. Interceptors & i18n
+    // ==========================================
+
+    @Bean
+    public HandlerInterceptor loginInterceptor() {
+        return new LoginInterceptor();
+    }
+
+    @Bean
+    public HandlerInterceptor historyInterceptor() {
+        return new HistoryInterceptor();
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("language");
+        return interceptor;
+    }
+
+    @Bean
+    public SessionLocaleResolver localeResolver() {
+        SessionLocaleResolver resolver = new SessionLocaleResolver();
+        resolver.setDefaultLocale(Locale.KOREAN);
+        return resolver;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // i18n Locale Change Interceptor
+        registry.addInterceptor(localeChangeInterceptor());
+
+        // Login Interceptor
+        registry.addInterceptor(loginInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/admin/luserLogin.do",
+                        "/admin/doLogin.do",
+                        "/admin/doSessChk.do",
+                        "/admin/doLogout.do"
+                );
+
+        // History Interceptor
+        registry.addInterceptor(historyInterceptor())
+                .addPathPatterns("/**/*.do");
+    }
+
+    // ==========================================
+    // 3. Exception Resolver
+    // ==========================================
+
+    @Bean
+    public SimpleMappingExceptionResolver exceptionResolver() {
+        SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
+        resolver.setDefaultErrorView("common/error");
+
+        Properties mappings = new Properties();
+        mappings.setProperty("org.springframework.dao.DataAccessException", "cmmn/dataAccessFailure");
+        mappings.setProperty("org.springframework.transaction.TransactionException", "cmmn/transactionFailure");
+        mappings.setProperty("egovframework.rte.fdl.cmmn.exception.EgovBizException", "cmmn/egovError");
+        mappings.setProperty("org.springframework.security.AccessDeniedException", "cmmn/egovError");
+
+        resolver.setExceptionMappings(mappings);
+        return resolver;
+    }
+
+    // ==========================================
+    // 4. Custom Binding Initializer (@ModelAttribute)
+    // ==========================================
+
+    @Bean
+    public EgovBindingInitializer egovBindingInitializer() {
+        return new EgovBindingInitializer();
+    }
+
+    @Bean
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter(EgovBindingInitializer bindingInitializer) {
+        RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
+        adapter.setWebBindingInitializer(bindingInitializer);
+        return adapter;
+    }
+
+    // ==========================================
+    // 5. File Upload (Spring Boot Standard Multipart)
+    // ==========================================
+
+    /**
+     * Spring Boot 3.x에서는 CommonsMultipartResolver 대신 StandardServletMultipartResolver 사용 권장
+     * (maxUploadSize 등은 application.properties에서 지정)
+     */
+    @Bean
+    public StandardServletMultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
+
+    // ==========================================
+    // 6. Pagination Manager & View Controller
+    // ==========================================
+
+    @Bean
+    public EgovImgPaginationRenderer imageRenderer() {
+        return new EgovImgPaginationRenderer();
+    }
+
+    @Bean
+    public DefaultPaginationManager paginationManager(EgovImgPaginationRenderer imageRenderer) {
+        DefaultPaginationManager manager = new DefaultPaginationManager();
+        Map<String, Object> rendererType = new HashMap<>();
+        rendererType.put("image", imageRenderer);
+        manager.setRendererType(rendererType);
+        return manager;
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/cmmn/validator.do").setViewName("cmmn/validator");
+    }
+}

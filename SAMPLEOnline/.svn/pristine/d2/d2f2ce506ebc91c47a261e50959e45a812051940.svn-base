@@ -1,0 +1,13 @@
+## EgovProperties.initialize
+* Global.properties를 하드코딩함. : war 내부를 읽어오는 부분에서 오류남. 원본 소스는 EgovProperties_old._java 로 저장해둠. 2026.10.29
+
+## File upload 설정(Commons IO 연계) TO DO: 디렉토리 확인할 것.
+* spring.servlet.multipart.max-file-size=10MB 
+* app.file.upload-dir=C:/dev/project_w/upload/
+* app.file.temp-dir=C:/dev/project_w/temp/
+
+
+## EgovAbstractServiceImpl
+* 전자정부 프레임웍에서 뽑아서 넣어놓을 것.
+
+## dispatcher_server.xml -> WebConfig.java 로 변경

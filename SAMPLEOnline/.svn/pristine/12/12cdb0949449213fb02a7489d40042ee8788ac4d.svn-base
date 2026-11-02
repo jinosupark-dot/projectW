@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.CodeMapper">
+
+
+	<!-- 공통코드조회 -->
+	<select id="selectCommonCodeListById" parameterType="map" resultType="FwkMap">
+		SELECT /* Code_Sql.selectCommonCodeListById 공통코드조회 */
+		       A.STNRD_TRMN_ENG_NM  AS CODE_ID        /* 표준영어영문명 */
+		     , A.CDC_VALT           AS CODE           /* 통합코드텍스트값 */
+		     , B.CDC_VAL_ABBR_NM    AS CODE_ABBR_NM   /* 통합코드값축약명 */
+		     , B.CDC_VAL_NM         AS CODE_NM        /* 통합코드값명 */
+		     , B.CDC_LVL            AS CODE_LVL       /* 통합코드레벨 */
+		     , 0                    AS CODE_SEQ       /* 정렬순서 */
+		  FROM (SELECT #{codeId} AS STNRD_TRMN_ENG_NM
+		             , CDC_VALT
+		          FROM (SELECT CDC_VALT	/* 통합코드텍스트값 */
+		                  FROM EAGLE.TB_CISSM02 /* [유지]통합코드중심 */
+		                 WHERE STNRD_TRMN_ENG_NM = #{codeId}
+		                   AND USE_YN = 'Y'
+		                   AND TO_CHAR(SYSDATE, 'YYYYMMDD') BETWEEN AVL_STR_YMD AND AVL_END_YMD
+		               )
+		       ) A
+		     , EAGLE.TB_CISSM02 B /* [유지]통합코드중심 */
+		 WHERE A.STNRD_TRMN_ENG_NM = B.STNRD_TRMN_ENG_NM(+)
+		   AND A.CDC_VALT = B.CDC_VALT(+)
+		 ORDER BY A.CDC_VALT
+	</select>
+	
+	
+	<!-- TB_CISSM02(개별코드관리) 테이블 SQL -->
+	<select id="selectCodeList" parameterType="map" resultType="FwkMap">
+		<![CDATA[		
+		SELECT /* Code_Sql.selectCodeList 개별코드 조회 */		
+		      STNRD_TRMN_ENG_NM							/* 표준영어영문명 */
+		     ,CDC_VAL_NM AS STNRD_TRMN_KRA_NM			/* 표준영어한글명 */
+		     ,CDC_VALT									/* 통합코드텍스트값 */
+		     ,CDC_VAL_ABBR_NM							/* 통합코드값축약명 */
+		     ,CDC_VAL_NM								/* 통합코드값명 */
+		     ,CDC_LVL									/* 통합코드레벨 */
+		     ,UPP_STNRD_TRMN_ENG_NM						/* 상위표준용어영문명 */
+		     ,UPP_CDC_VALT								/* 상위통합코드텍스트값 */
+		     ,CDC_INFO_CNTNT							/* 통합코드정보내용 */
+		     ,CDC_DFNT_EXPLN							/* 통합코드정의설명 */
+		     ,USE_YN									/* 사용여부 */
+		     ,AVL_STR_YMD								/* 유효시작일자 */
+		     ,AVL_END_YMD								/* 유효종료일자 */
+		     ,0 AS STDIL_SEQ							/* 정렬순서 */
+		     ,TRTR_RRN AS REGNT_ENO						/* 등록자사번 */
+		     ,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS REG_DTM	/* 등록일시 */
+		     ,TRTR_RRN AS TRTR_ENO						/* 처리자사번 */
+		     ,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		 FROM EAGLE.TB_CISSM02 /* 개별코드관리 */
+		ORDER BY STNRD_TRMN_ENG_NM
+		]]>
+	</select>
+	
+	<select id="selectCodeListByKeywords" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Code_Sql.selectCodeListByKeywords 개별코드 조회 */	
+		      STNRD_TRMN_ENG_NM							/* 표준영어영문명 */
+		     ,CDC_VAL_NM AS STNRD_TRMN_KRA_NM			/* 표준영어한글명 */
+		     ,CDC_VALT									/* 통합코드텍스트값 */
+		     ,CDC_VAL_ABBR_NM							/* 통합코드값축약명 */
+		     ,CDC_VAL_NM								/* 통합코드값명 */
+		     ,CDC_LVL									/* 통합코드레벨 */
+		     ,UPP_STNRD_TRMN_ENG_NM						/* 상위표준용어영문명 */
+		     ,UPP_CDC_VALT								/* 상위통합코드텍스트값 */
+		     ,CDC_INFO_CNTNT							/* 통합코드정보내용 */
+		     ,CDC_DFNT_EXPLN							/* 통합코드정의설명 */
+		     ,USE_YN									/* 사용여부 */
+		     ,AVL_STR_YMD								/* 유효시작일자 */
+		     ,AVL_END_YMD								/* 유효종료일자 */
+		     ,0 AS STDIL_SEQ							/* 정렬순서 */
+		     ,TRTR_RRN AS REGNT_ENO						/* 등록자사번 */
+		     ,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS REG_DTM	/* 등록일시 */
+		     ,TRTR_RRN AS TRTR_ENO						/* 처리자사번 */
+		     ,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		FROM EAGLE.TB_CISSM02	 /* 개별코드관리 */		
+	   WHERE UPPER(STNRD_TRMN_ENG_NM) LIKE '%' ||UPPER(#{stnrdTrmnEngNm})|| '%' 
+		 AND UPPER(STNRD_TRMN_KRA_NM) LIKE '%' || UPPER(#{stnrdTrmnKraNm}) ||'%'
+		 AND UPPER(CDC_VAL_NM) LIKE '%' || UPPER(#{cdcValNm}) ||'%'
+		ORDER BY STNRD_TRMN_ENG_NM
+		]]>
+	</select>
+	
+	<!-- TB_CISSM02 - [유지]통합코드중심 -->
+	<select id="selectCodeStatList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Code_Sql.selectCodeStatList 통합코드 조회 */ 
+		       STNRD_TRMN_ENG_NM						/* 표준영어영문명 */
+		     , CDC_VALT									/* 통합코드텍스트값 */
+		     , CDC_VAL_ABBR_NM							/* 통합코드값축약명 */
+		     , CDC_VAL_NM								/* 통합코드값명 */
+		     , CDC_LVL									/* 통합코드레벨 */
+		     , UPP_STNRD_TRMN_ENG_NM					/* 상위표준용어영문명 */
+		     , UPP_CDC_VALT								/* 상위통합코드텍스트값 */
+		     , CDC_INFO_CNTNT							/* 통합코드정보내용 */
+		     , CDC_DFNT_EXPLN							/* 통합코드정의설명 */
+		     , USE_YN									/* 사용여부 */
+		     , AVL_STR_YMD								/* 유효시작일자 */
+		     , AVL_END_YMD								/* 유효종료일자 */
+		     , TRTR_RRN									/* 처리자주민등록번호 */
+		     , TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		  FROM EAGLE.TB_CISSM02 /* [유지]통합코드중심 */
+		ORDER BY STNRD_TRMN_ENG_NM
+		       , CDC_VALT
+		]]>
+	</select>
+	
+	<select id="selectCodeStatListByKeywords" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Code_Sql.selectCodeStatListByKeywords 통합코드 조회 */ 
+		       STNRD_TRMN_ENG_NM						/* 표준영어영문명 */
+		     , CDC_VALT									/* 통합코드텍스트값 */
+		     , CDC_VAL_ABBR_NM							/* 통합코드값축약명 */
+		     , CDC_VAL_NM								/* 통합코드값명 */
+		     , CDC_LVL									/* 통합코드레벨 */
+		     , UPP_STNRD_TRMN_ENG_NM					/* 상위표준용어영문명 */
+		     , UPP_CDC_VALT								/* 상위통합코드텍스트값 */
+		     , CDC_INFO_CNTNT							/* 통합코드정보내용 */
+		     , CDC_DFNT_EXPLN							/* 통합코드정의설명 */
+		     , USE_YN									/* 사용여부 */
+		     , AVL_STR_YMD								/* 유효시작일자 */
+		     , AVL_END_YMD								/* 유효종료일자 */
+		     , TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		FROM EAGLE.TB_CISSM02 /* [유지]통합코드중심 */
+	   WHERE UPPER(STNRD_TRMN_ENG_NM) LIKE '%' ||UPPER(#{stnrdTrmnEngNm})|| '%' 
+		 AND UPPER(CDC_VAL_NM) LIKE '%' || UPPER(#{cdcValNm}) ||'%'
+	 ORDER BY STNRD_TRMN_ENG_NM, CDC_VALT
+		]]>
+	</select>
+	
+	<insert id="insertCodeInfo" parameterType="map">
+		<![CDATA[
+		INSERT /* Code_Sql.insertCodeInfo 개별코드 저장 */  
+		INTO S_CB.TB_ICBETM01 /* 개별코드관리 */
+		(
+		STNRD_TRMN_ENG_NM,				/* 표준영어영문명 */
+		STNRD_TRMN_KRA_NM,				/* 표준영어한글명 */
+		CDC_VALT,						/* 통합코드텍스트값 */
+		CDC_VAL_ABBR_NM,				/* 통합코드값축약명 */
+		CDC_VAL_NM,						/* 통합코드값명 */
+		USE_YN,							/* 사용여부 */
+		AVL_STR_YMD,					/* 유효시작일자 */
+		AVL_END_YMD,					/* 유효종료일자 */
+		STDIL_SEQ,						/* 정렬순서 */
+		REGNT_ENO,						/* 등록자사번 */
+		REG_DTM,						/* 등록일시 */
+		TRTR_ENO,						/* 처리자사번 */
+		TRT_DTM							/* 처리일시 */
+		)
+		
+		VALUES
+		(
+		#{stnrdTrmnEngNm},
+		#{stnrdTrmnKraNm},
+		#{cdcValt},
+		#{cdcValAbbrNm},
+		#{cdcValNm},
+		#{useYn},
+		#{avlStrYmd},
+		#{avlEndYmd} ,
+		#{stdilSeq},
+		#{regntEno},
+		CURRENT_TIMESTAMP,
+		#{trtrEno},
+		CURRENT_TIMESTAMP
+		)
+		]]>
+	</insert>
+
+	<update id="updateCodeInfo" parameterType="map">
+		<![CDATA[
+		UPDATE /* Code_Sql.updateCodeInfo 개별코드 저장 */   
+		S_CB.TB_ICBETM01 /* 개별코드관리 */
+		SET
+		    STNRD_TRMN_ENG_NM = #{stnrdTrmnEngNm},
+		    STNRD_TRMN_KRA_NM = #{stnrdTrmnKraNm},
+		    CDC_VALT = #{cdcValt},					
+		    CDC_VAL_ABBR_NM = #{cdcValAbbrNm},
+		    CDC_VAL_NM = #{cdcValNm},
+		    CDC_LVL = #{cdcLvl},
+		    UPP_STNRD_TRMN_ENG_NM = #{uppStnrdTrmnEngNm},
+		    UPP_CDC_VALT = #{uppCdcValt},
+		    CDC_INFO_CNTNT = #{cdcInfoCntnt},
+		    CDC_DFNT_EXPLN = #{cdcDfntExpln},
+		    USE_YN = #{useYn},
+		    AVL_STR_YMD = #{avlStrYmd},
+		    AVL_END_YMD = #{avlEndYmd} ,
+		    STDIL_SEQ = #{stdilSeq},
+		    REGNT_ENO = #{regntEno},
+		    TRTR_ENO = #{trtrEno},
+		    TRT_DTM = CURRENT_TIMESTAMP		
+		WHERE 
+			STNRD_TRMN_ENG_NM =#{stnrdTrmnEngNm}			/* PK */
+			AND CDC_VALT = #{cdcValt}  						/* PK */
+		]]>
+	</update>
+
+	<delete id="deleteCodeInfo" parameterType="map">
+		<![CDATA[
+		DELETE /* Code_Sql.deleteCodeInfo 개별코드 삭제 */ 
+		FROM S_CB.TB_ICBETM01 /* 개별코드관리 */
+		WHERE 
+			STNRD_TRMN_ENG_NM =#{stnrdTrmnEngNm}			/* PK */
+			AND CDC_VALT = #{cdcValt}  						/* PK */
+		]]>
+	</delete>
+	
+</mapper>

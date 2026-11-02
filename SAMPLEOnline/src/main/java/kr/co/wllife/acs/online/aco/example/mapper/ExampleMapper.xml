@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.wllife.acs.online.aco.example.mapper.ExampleMapper">
+                   
+	<!-- 공지사항관리 목록 조회(Read) -->
+	<select id="selectList" parameterType="map" resultType="kr.co.wllife.acs.online.aco.example.vo.ExampleDTO$selectListVO">
+	      SELECT A.ANCM_NTF_ID
+                 , A.TITL			
+                 , A.CONT
+                 , A.IQCNT
+                 ,TO_CHAR(A.IPDTM, 'YYYY-MM-DD') AS IPDTM
+                 , A.INPP_CD
+              FROM TBPSB0015 A
+		     ORDER BY ROWNUM
+		     FETCH FIRST 100 ROWS ONLY
+	</select>
+
+	<!-- 공지사항관리 상세 조회(Read): key:ancm_ntf_id -->
+	<select id="viewNoticeDetail" parameterType="map" resultType="kr.co.wllife.acs.online.aco.example.vo.ExampleDTO$viewNoticeDetailVO">
+		  SELECT ANCM_NTF_ID 
+	           , TITL			
+	           , CONT
+	           , IQCNT
+	           , TO_CHAR(IPDTM, 'YYYY-MM-DD') AS IPDTM
+	           , INPP_CD
+          FROM TBPSB0015
+          WHERE ANCM_NTF_ID= #{ancmNtfId}
+	</select>      
+
+</mapper>

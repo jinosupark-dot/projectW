@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+<!-- 팝업 -->
+<div class="popupWrap">
+	<div class="popup_header">
+    	<h3>팝업 타이틀</h3>
+    </div>
+    <div class="popup_body">
+    	<h4>서브타이틀</h4>
+        <div class="popup_content">
+        	에어코드 : 1002<br/>
+			내용: 알수 없는 에러2<br/>
+			상세 : 내용입니다
+        </div>
+    </div>
+  <div class="popup_footer">
+      <input type="button" value="확인">
+      <input type="button" value="취소">
+      <input type="button" value="닫기">
+    </div>
+</div>
+<div class="popupDim"></div>
+<!--// 팝업 -->
+
+</body>
+</html>

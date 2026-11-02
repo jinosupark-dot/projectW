@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+<!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">특약별 재보험회사 매핑정보 업로드</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">           
+            <div class="item">
+              <p class="title">재보험특약코드</p>
+              <select>
+                <option>1</option>
+              </select>
+            </div>   
+            <div class="item">
+              <p class="title">재보험회사코드</p>
+              <select>
+                <option>1</option>
+              </select>
+            </div>  
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- 리스트 -->
+    <div class="btnWrap clearfix mt50">
+      <div class="fl">
+        <h3 class="title">원수보험</h3>
+      </div>
+      <div class="fr">
+        <button class="btn-xlsdown"><span>양식다운로드</span></button>
+        <button class="btn-xlsup"><span>양식업로드</span></button>
+        <button class="btn-save"><span>저장</span></button>
+      </div>
+    </div>  
+    <div class="tableWrap">
+      <table class="tableA">      
+        <thead>
+          <tr>
+            <th>재보험특약코드</th>
+            <th>재보험회사코드</th>
+            <th>특약재보험회사구분코드</th>
+            <th>등록자사번</th>
+            <th>등록일시</th>
+            <th>처리자사번</th>
+            <th>처리일시</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tc">1111</td>
+            <td class="tc">2222</td>
+            <td class="tc">3333</td>
+            <td class="tc">4444</td>
+            <td class="tc">D-2</td>
+            <td class="tc">5555</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+          </tr>
+          <tr>
+            <td class="tc">1111</td>
+            <td class="tc">2222</td>
+            <td class="tc">3333</td>
+            <td class="tc">4444</td>
+            <td class="tc">D-2</td>
+            <td class="tc">5555</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+          </tr>
+          <tr>
+            <td class="tc">1111</td>
+            <td class="tc">2222</td>
+            <td class="tc">3333</td>
+            <td class="tc">4444</td>
+            <td class="tc">D-2</td>
+            <td class="tc">5555</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+          </tr>
+          <tr>
+            <td class="tc">1111</td>
+            <td class="tc">2222</td>
+            <td class="tc">3333</td>
+            <td class="tc">4444</td>
+            <td class="tc">D-2</td>
+            <td class="tc">5555</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+          </tr>
+          <tr>
+            <td class="tc">1111</td>
+            <td class="tc">2222</td>
+            <td class="tc">3333</td>
+            <td class="tc">4444</td>
+            <td class="tc">D-2</td>
+            <td class="tc">5555</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>   
+    <!-- 리스트//--> 
+    <!--행추가-->
+    <div class="btnWrap">
+      <div class="fr">
+        <button class="btn-grid-add"><span>행추가</span></button>
+      </div>
+    </div>
+    <!--행추가//-->
+  <!-- content01//--> 
+ </div>
+ 
+</body>
+</html>

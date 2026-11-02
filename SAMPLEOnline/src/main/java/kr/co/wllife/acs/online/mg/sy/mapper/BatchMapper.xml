@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.BatchMapper">
+	<!-- ////////////////////////////////////mg915p start////////////////////////////////////-->
+	<!-- 배치 리스트 조회 START -->
+	<select id="selectBatchList" parameterType="map" resultType="FwkMap">
+	   
+		WITH MONI_TMS AS /* Batch_Sql.selectBatchList 배치 리스트 조회  */ 
+		(
+            SELECT B.STACT_FIN_YM
+                 , A.STACT_ACT_ID			/* 결산활동ID */
+                 , A.BAT_ID					/* 배치ID */
+                 , B.STR_DTM				/* 시작일시 */
+              FROM S_FI.TB_IFIMTF01 A		/* 결산Activity관리 */
+             INNER JOIN S_FI.TB_IFIMTD01 B	/* 결산Monitoring내역관리 */
+               ON A.STACT_ACT_ID = B.STACT_ACT_ID
+              AND A.USE_YN = 'Y'
+              AND A.BAT_ID IS NOT NULL
+              AND B.STACT_FIN_YM =  #{finYm}
+              AND B.FIN_TMS = (SELECT MAX(FIN_TMS) FROM S_FI.TB_IFIMTD01 WHERE STACT_FIN_YM =  #{finYm})  
+        ),
+        BAT_LIST AS(
+			SELECT A.STND_YMD			/* 기준일자 */
+			     , A.BAT_WK_ID			/* 배치작업ID */
+			     , A.SP_ID				/* SP ID */
+			     , A.REG_DTM			/* 등록일시 */
+			     , 'S' AS RST_CD		/* 결과코드 */
+			  FROM S_MG.TB_IMGDAL02 A	/* 배치실행결과로그 */
+             INNER JOIN  MONI_TMS B
+                ON A.BAT_WK_ID = B.BAT_ID
+                <![CDATA[
+               AND A.REG_DTM >= B.STR_DTM
+               ]]>
+			 WHERE 1 = 1
+			   AND A.SP_ID NOT LIKE '%_TRUN_%'
+			   AND A.SP_ID NOT LIKE '%DECM_TAB%'
+               AND A.SP_ID NOT LIKE '%COMP_TAB%'
+			<choose>
+				<when test='finYm != "" and finYm != NULL'>
+					AND A.STND_YMD LIKE #{finYm}||'%'
+				</when>
+				<otherwise>
+					AND A.STND_YMD = #{finYm}
+				</otherwise>
+			</choose>
+			UNION ALL
+			SELECT A.STND_YMD			/* 기준일자 */
+				 , A.BAT_WK_ID			/* 배치작업ID */
+				 , A.SP_ID				/* SP ID */
+				 , A.REG_DTM			/* 등록일시 */
+				 , 'E' AS RST_CD		/* 결과코드 */
+			  FROM S_MG.TB_IMGDAL03 A	/* 배치실행에러로그 */
+	             INNER JOIN  MONI_TMS B
+	                ON A.BAT_WK_ID = B.BAT_ID
+	               <![CDATA[
+	               AND A.REG_DTM >= B.STR_DTM
+	               ]]>
+			 WHERE 1 = 1
+			   AND A.SP_ID NOT LIKE '%_TRUN_%'
+			   AND A.SP_ID NOT LIKE '%DECM_TAB%'
+               AND A.SP_ID NOT LIKE '%COMP_TAB%'
+			<choose>
+				<when test='finYm != "" and finYm != NULL'>
+					AND A.STND_YMD LIKE #{finYm}||'%'
+				</when>
+				<otherwise>
+					AND A.STND_YMD = #{finYm}
+				</otherwise>
+			</choose>
+		),
+		BAT_LAST_LST AS (
+			SELECT L.BAT_WK_ID													/* 배치작업ID */
+				 , CASE WHEN L.ERR_CNT > 0 THEN 'E' ELSE 'F' END AS PRG_STAT	/* 프로그램 시작 */
+				 , L.REG_DTM AS FIN_TOD											/* 등록일시 */
+			  FROM (
+					SELECT A.BAT_WK_ID													/* 배치작업ID */
+				 		, SUM(CASE WHEN A.RST_CD = 'S' THEN 1 ELSE 0 END) AS SUC_CNT	/* 성공건수 */
+				 		, SUM(CASE WHEN A.RST_CD = 'E' THEN 1 ELSE 0 END) AS ERR_CNT	/* 실패건수 */
+				 		, MAX(A.REG_DTM) AS REG_DTM
+			  		  FROM BAT_LIST A
+				 	, (SELECT BAT_WK_ID, SP_ID, MAX(REG_DTM) AS REG_DTM FROM BAT_LIST 
+				 		GROUP BY BAT_WK_ID, SP_ID) B
+			 WHERE 1 = 1
+			   AND A.BAT_WK_ID = B.BAT_WK_ID
+			   AND A.SP_ID = B.SP_ID
+			   AND A.REG_DTM = B.REG_DTM
+			 GROUP BY A.BAT_WK_ID
+				) L
+		),
+		BAT_PRG_STAT AS (
+		    SELECT ROW_NUMBER() OVER (PARTITION BY A.BAT_WK_ID ORDER BY A.REG_DTM DESC) AS RW
+		         , A.BAT_WK_ID
+		         , A.BAT_PRG_STAT_CD
+		         , C.CDC_VAL_NM AS PRG_STAT_NM
+		      FROM S_MG.TB_IMGDAL05 A       /* 배치실행로그 */
+             INNER JOIN  MONI_TMS B
+                ON A.BAT_WK_ID = B.BAT_ID
+               AND A.FIN_YM = B.STACT_FIN_YM
+               <![CDATA[
+               AND A.REG_DTM >= B.STR_DTM
+               ]]>
+             INNER JOIN  EAGLE.TB_CISSM02 C   /* 코드관리 */
+                ON C.STNRD_TRMN_ENG_NM = 'BAT_PRG_STAT_CD'
+               AND A.BAT_PRG_STAT_CD = C.CDC_VALT
+		     WHERE 1 = 1
+		)
+		SELECT A.BAT_ID AS BAT_ID					       /* 배치ID */
+			 , NVL(STA.PRG_STAT_NM, '수행전') AS BAT_STATUS  /* 배치 상태 */
+			 , NVL(B.BAT_EXPLN, '') AS BAT_EXPLN      	   /* 배치설명 */
+		  FROM S_FI.TB_IFIMTF01 A	    /* 결산Activity관리 */
+		 INNER JOIN S_MG.TB_IMGSYF08 B	/* 배치정보관리기본 */
+		    ON A.BAT_ID = B.BAT_ID     <!-- 3.16 다시 BAT_ID로수정   -->
+		  LEFT OUTER JOIN BAT_LAST_LST C
+		    ON A.BAT_ID = C.BAT_WK_ID
+		  LEFT OUTER JOIN BAT_PRG_STAT STA
+		    ON A.BAT_ID = STA.BAT_WK_ID
+		   AND STA.RW = 1
+		 WHERE 1 = 1
+		   AND A.STACT_ACT_LVL = 4
+		<choose>
+			<when test='batchId != "" and batchId != NULL'>
+				AND A.STACT_ACT_UPP_ID = #{actUppId}
+				AND A.BAT_ID = #{batchId}
+			</when>
+			<otherwise>
+				AND A.STACT_ACT_UPP_ID = #{actUppId}
+			</otherwise>
+		</choose>		
+		ORDER BY A.STACT_ACT_SEQ
+	</select>
+	<!-- 배치 리스트 조회 END-->
+	
+	<!-- 배치 파라미터 조회 START -->
+	<select id="selectBatchParamList" parameterType="map" resultType="FwkMap">
+		SELECT /* Batch_Sql.selectBatchParamList 배치 파라미터 조회  */ 
+		       B.PRMTR_INPT_SEQ																/* 파라미터입력순서 */
+		     , B.INPT_PRMTR_ID AS INPT_PRMTR_ID												/* 입력파라미터ID */
+		     , NVL(D.INPT_PRMTR_EXPLN,NVL(C.INPT_PRMTR_EXPLN,'')) AS INPT_PRMTR_BY_USER		/* 입력파라미터설명 */
+		     , B.INPT_PRMTR_NM																/* 입력파라미터명 */
+		     , B.INPT_PRMTR_EXPLN															/* 입력파라미터설명 */
+		     , B.USE_YN																		/* 사용여부 */
+		  FROM S_MG.TB_IMGSYF08 A		/* 배치정보관리기본 */
+		 INNER JOIN S_MG.TB_IMGSYF09 B 	/* 배치파라미터관리기본 */
+		    ON A.PGM_ID = B.PGM_ID
+		  LEFT OUTER JOIN S_MG.TB_IMGSYF10 C	/* 배치파라미터공통값관리 */
+		    ON B.INPT_PRMTR_ID = C.INPT_PRMTR_ID
+		   AND C.STACT_FIN_YM = #{finYm}
+		  LEFT OUTER JOIN S_MG.TB_IMGSYF11 D	/* 배치파라미터고정값관리 */
+		    ON B.PGM_ID = D.PGM_ID
+		   AND B.INPT_PRMTR_ID = D.INPT_PRMTR_ID
+		 WHERE 1 = 1
+		   AND A.BAT_ID = #{batchId}
+		 ORDER BY B.PRMTR_INPT_SEQ
+	</select>
+	<!-- 배치 파라미터 조회 END -->
+	<!-- ////////////////////////////////////mg915p end////////////////////////////////////-->
+	
+	<!-- ////////////////////////////////////mg915m start////////////////////////////////////-->
+	<!-- 배치 리스트 조회 START -->
+	<select id="selectMngBatchList" parameterType="map" resultType="FwkMap">
+		SELECT /* Batch_Sql.selectMngBatchList 배치 리스트 조회  */
+		       B.PGM_ID					AS PGM_ID		/* 프로그램ID */ <!-- 3.16수정  -->
+			 , B.BAT_ID 				AS BAT_ID		/* 배치ID */
+			 , NVL(B.BAT_NM, ' ') 		AS BAT_NM		/* 배치명 */
+			 , NVL(B.BAT_EXPLN, ' ') 	AS BAT_EXPLN	/* 배치설명 */
+			 , NVL(B.I17_BUSN_SC_CD, ' ') 	AS BUSN_SC_CD	/* 업무구분코드 */
+			 , NVL(B.USE_YN, ' ') 		AS USE_YN		/* 사용여부 */
+		  FROM S_MG.TB_IMGSYF08 B	/* 배치정보관리기본 */
+		 WHERE 1 = 1
+		 ORDER BY PGM_ID	<!-- 3.16수정  -->
+	</select>
+	<!-- 배치 리스트 조회 END -->
+	
+	<!-- 파라미터 리스트 조회 START -->
+	<select id="selectMngParamList" parameterType="map" resultType="FwkMap">
+		SELECT /* Batch_Sql.selectMngParamList 파라미터 리스트 조회  */
+		       A.PGM_ID					AS PGM_ID				/* 프로그램ID */	<!-- 3.16수정  -->
+			 , A.ITM_ID					AS ITM_ID				/* 항목ID */
+			 , A.BAT_ID 				AS BAT_ID				/* 배치ID */
+			 , A.PRMTR_INPT_SEQ 		AS PRMTR_INPT_SEQ		/* 파라미터입력순서 */
+			 , A.INPT_PRMTR_ID 			AS INPT_PRMTR_ID		/* 입력파라미터ID */
+			 , A.INPT_PRMTR_NM 			AS INPT_PRMTR_NM		/* 입력파라미터명 */
+			 , A.INPT_PRMTR_EXPLN 		AS INPT_PRMTR_EXPLN		/* 입력파라미터설명 */
+			 , A.INPT_PRMTR_TYP_CD 		AS INPT_PRMTR_TYP_CD	/* 입력파라미터유형코드 */
+			 , A.USE_YN                 AS USE_YN				/* 사용여부 */
+		  FROM S_MG.TB_IMGSYF09 A	/* 배치파라미터관리기본 */
+		 WHERE A.PGM_ID = #{pgmId}	<!-- 3.16수정  -->
+		 ORDER BY PRMTR_INPT_SEQ
+	</select>
+	<!-- 파라미터 리스트 조회 END -->
+	
+	<!-- 파라미터유형코드 조회 START -->
+	<select id="selectCdcValtList" parameterType="map" resultType="FwkMap">
+		SELECT /* Batch_Sql.selectCdcValtList 파라미터유형코드 조회  */
+		       CDC_VALT			/* 통합코드텍스트값 */
+			 , CDC_VAL_ABBR_NM	/* 통합코드값축약명 */
+		  FROM EAGLE.TB_CISSM02	/* 개별코드관리 */
+		 WHERE STNRD_TRMN_ENG_NM = 'I17_BUSN_SC_CD'
+	</select>
+	<!-- 파라미터유형코드 조회 END -->
+
+	<!-- 조회조건으로 배치 리스트 조회 START -->
+	<select id="selectBatchListbyData" parameterType="map" resultType="FwkMap">
+		SELECT /* Batch_Sql.selectBatchListbyData 조회조건으로 배치 리스트 조회  */
+		       B.PGM_ID					AS PGM_ID		/* 프로그램ID */
+			 , B.BAT_ID 				AS BAT_ID		/* 배치ID */
+			 , NVL(B.BAT_NM, ' ') 		AS BAT_NM		/* 배치명 */
+			 , NVL(B.BAT_EXPLN, ' ') 	AS BAT_EXPLN	/* 배치설명 */
+			 , NVL(B.I17_BUSN_SC_CD, ' ') 	AS BUSN_SC_CD	/* 업무구분코드 */
+			 , NVL(B.USE_YN, ' ') 		AS USE_YN		/* 사용여부 */
+		  FROM S_MG.TB_IMGSYF08 B	/* 배치정보관리기본 */
+		 WHERE 1 = 1
+		   AND B.BAT_ID LIKE '%'||#{batchId}||'%'
+		   AND B.BAT_EXPLN LIKE '%'||#{batchExpln}||'%'
+		<choose>
+			<when test='busnScCd != "" and finYm != busnScCd'>
+				AND SUBSTR(B.BAT_ID, 4, 2) = SUBSTR(#{busnScCd}, 3, 2)
+			</when>
+			<otherwise>
+				AND B.PGM_ID = B.PGM_ID <!-- 3.16수정  -->
+			</otherwise>
+		</choose>
+		 ORDER BY PGM_ID <!-- 3.16수정  -->
+		<!-- 업무구분 Equal, 배치 id, 배치명 like 검색 -->
+	</select>
+	<!-- 조회조건으로 배치 리스트 조회 END -->
+	
+	<!-- 배치관리 저장 START -->
+	<insert id="insertBatchGridInfo" parameterType="map">
+	<![CDATA[
+	INSERT /* Batch_Sql.insertBatchGridInfo 배치관리 저장  */
+	INTO S_MG.TB_IMGSYF08	/* 배치정보관리기본 */
+	( 
+		 PGM_ID		/* 프로그램ID */
+		,BAT_ID		/* 배치ID */
+		,BAT_NM		/* 배치명 */
+		,BAT_EXPLN	/* 배치설명 */
+		,I17_BUSN_SC_CD	/* 업무구분코드 */
+		,USE_YN		/* 사용여부 */
+		,REG_DTM	/* 등록자사번 */
+		,REGNT_ENO	/* 등록일시 */
+		,TRT_DTM	/* 처리자사번 */
+		,TRTR_ENO	/* 처리일시 */
+	)
+	VALUES
+	( 	
+		(SELECT LPAD(NVL(MAX(PGM_ID),0)+1,5,0) FROM S_MG.TB_IMGSYF08) /* 배치정보관리기본 */
+		,#{batId}
+		,#{batId}
+		,#{batExpln}
+		,#{busnScCd}
+		,#{useYn}
+		,CURRENT_TIMESTAMP
+		,#{regntEno}
+		,CURRENT_TIMESTAMP
+		,#{trtrEno}
+	)
+	]]>
+	</insert>
+
+	<update id="updateBatchGridInfo" parameterType="map">
+		UPDATE /* Batch_Sql.updateBatchGridInfo 배치관리 저장  */
+		   S_MG.TB_IMGSYF08	/* 배치정보관리기본 */
+		   SET BAT_ID		= #{batId}	
+		   	 , BAT_NM 		= #{batId}
+			 , BAT_EXPLN 	= #{batExpln}
+			 , I17_BUSN_SC_CD 	= #{busnScCd}
+			 , USE_YN 		= #{useYn}
+			 , TRTR_ENO 	= #{trtrEno}
+			 , TRT_DTM 		= CURRENT_TIMESTAMP
+		 WHERE PGM_ID  		= #{pgmId} <!-- 3.16수정  -->
+	</update>
+
+	<delete id="deleteBatchGridInfo" parameterType="map">
+		DELETE /* Batch_Sql.deleteBatchGridInfo 배치관리 삭제  */
+		  FROM S_MG.TB_IMGSYF08 /* 배치정보관리기본 */
+		 WHERE PGM_ID 		= #{pgmId} <!-- 3.16수정  -->
+	</delete>
+	<!-- 배치관리 저장 END -->
+
+	<!-- 파라미터관리 저장 START -->
+	<insert id="insertParamGridInfo" parameterType="map">
+	<![CDATA[
+	INSERT /* Batch_Sql.insertParamGridInfo 파라미터관리 저장  */
+	INTO S_MG.TB_IMGSYF09	/* 배치파라미터관리기본 */
+	(
+		 PGM_ID				/* 프로그램ID */
+		,ITM_ID				/* 항목ID */
+		,BAT_ID				/* 배치ID */
+		,INPT_PRMTR_ID		/* 입력파라미터ID */
+		,INPT_PRMTR_NM		/* 입력파라미터명 */
+		,INPT_PRMTR_EXPLN	/* 입력파라미터설명 */
+		,INPT_PRMTR_TYP_CD	/* 입력파라미터유형코드 */
+		,PRMTR_INPT_SEQ		/* 파라미터입력순서 */
+		,USE_YN				/* 사용여부 */
+		,REG_DTM			/* 등록자사번 */
+		,REGNT_ENO			/* 등록일시 */
+		,TRT_DTM			/* 처리자사번 */
+		,TRTR_ENO			/* 처리일시 */
+	)
+	VALUES
+	(
+		 #{pgmId}
+		,(SELECT LPAD(NVL(MAX(ITM_ID),0)+1,5,0) FROM S_MG.TB_IMGSYF09 /* 배치파라미터관리기본 */ WHERE PGM_ID = #{pgmId})
+		,#{batId}
+		,#{inptPrmtrId}
+		,#{inptPrmtrNm}
+		,#{inptPrmtrExpln}
+		,#{inptPrmtrTypCd}
+		,#{prmtrInptSeq}
+		,#{useYn}
+		,CURRENT_TIMESTAMP
+		,#{regntEno}
+		,CURRENT_TIMESTAMP
+		,#{trtrEno}
+	)
+	]]>
+	</insert>
+
+	<update id="updateParamGridInfo" parameterType="map">
+		UPDATE /* Batch_Sql.updateParamGridInfo 파라미터관리 저장  */ 
+		   S_MG.TB_IMGSYF09	/* 배치파라미터관리기본 */
+		   SET INPT_PRMTR_ID 		= #{inptPrmtrId}
+			 , INPT_PRMTR_NM 		= #{inptPrmtrNm}
+			 , INPT_PRMTR_EXPLN 	= #{inptPrmtrExpln}
+			 , INPT_PRMTR_TYP_CD 	= #{inptPrmtrTypCd}
+			 , PRMTR_INPT_SEQ 		= #{prmtrInptSeq}
+			 , USE_YN 				= #{useYn}
+			 , TRTR_ENO 			= #{trtrEno}
+			 , TRT_DTM 				= CURRENT_TIMESTAMP
+		 WHERE PGM_ID 				= #{pgmId}				<!-- 3.16수정  -->
+		   AND ITM_ID 				= #{itmId}				<!-- 3.16수정  -->
+	</update>
+
+	<delete id="deleteParamGridInfo" parameterType="map">
+		DELETE /* Batch_Sql.deleteParamGridInfo 파라미터관리 삭제  */  
+		  FROM S_MG.TB_IMGSYF09	/* 배치파라미터관리기본 */
+		 WHERE PGM_ID 		 		= #{pgmId} <!-- 3.16수정  -->
+		   AND ITM_ID 		 		= #{itmId} <!-- 3.16수정  -->
+	</delete>
+	
+	<!-- 배치 관리에서 배치 삭제시 파라미터 관리에서 해당 배치 파라미터 전체 삭제 -->
+	<delete id="deleteParamInfobyId" parameterType="map">
+		DELETE /* Batch_Sql.deleteParamInfobyId 파라미터관리 삭제  */ 
+		  FROM S_MG.TB_IMGSYF09  /* 배치파라미터관리기본 */
+		 WHERE PGM_ID 				= #{pgmId} <!-- 3.16수정  -->
+	</delete>
+	<!-- 파라미터관리 저장 END -->
+	<!-- ////////////////////////////////////mg915m END////////////////////////////////////-->
+	
+	
+	<!-- max PGM_ID(프로그램_ID) 찾기 
+	<select id="searchMaxPgmIdInfo" parameterType="map" resultType="FwkMap">
+		SELECT LPAD(NVL(MAX(PGM_ID),0)+1,5,0) AS PGM_ID
+		  FROM S_MG.TB_IMGSYF08 /* 배치정보관리기본 */
+	</select>
+	-->
+	<!-- max PGM_ID 일 때 ITM_ID(항목_ID) 찾기
+	<select id="searchBatch_Popup" parameterType="map" resultType="FwkMap">
+
+	</select>
+	-->	
+	
+	<!-- 배치 체크 로직 추가 20230628 START -->
+	<!-- 총계정원장 코스트센터코드 IFRS17 부서그룹정보기본에 존재여부 체크  -->
+	<select id="chkGlBrkdnCocntCd" parameterType="map" resultType="int">
+		/* Batch_Sql.chkGlBrkdnCocntCd 배치 PARAM 조회 */
+		<![CDATA[ 
+			    SELECT /*+ PARALLEL(8) */
+			           NVL(COUNT(1),0)
+			      FROM S_DH.TB_IDHFID01 A --총계정원장내역
+			     WHERE A.FSCYR = SUBSTR(#{finYm}, 1, 4)    --회계연도
+			       AND A.GL_CD = 'N1'                     --총계정원장코드 : I17기준데이터값
+			       AND SUBSTR(A.FNCT_DMN_CD,1,2) <> 'AZ'  --기능영역코드 : AZ001 등 소수점이자 금액 제외
+			       AND NOT EXISTS (SELECT 1
+			    	                 FROM S_DH.TB_IDHEAF01 B --IFRS17 부서그룹정보기본
+			    	                WHERE TRIM(B.WRKEX_DEPT_GRP_CD) IS NOT NULL  --사업비부서그룹코드
+			    	                  -- 실제 운영이 시작전에 기존 데이터를 생성 시 마감년월과 부서코드의 유효일자가 안맞기 때문에 2023년 1월 마감부터 적용되도혹 수정(2021/09/01)
+			    	                  AND SUBSTR(B.AVL_STR_YMD, 1, 6) <= CASE WHEN TO_CHAR(SYSDATE,'YYYYMMDD') >= '20230131' THEN #{finYm} 
+			    	                                                          ELSE SUBSTR(B.AVL_STR_YMD, 1, 6)
+			                                                            END    --유효시작일자  
+			    	                  AND SUBSTR(B.AVL_END_YMD, 1, 6) >= CASE WHEN TO_CHAR(SYSDATE,'YYYYMMDD') >= '20230131' THEN #{finYm} 
+			    	                                                          ELSE SUBSTR(B.AVL_STR_YMD, 1, 6)
+			    	                                                      END    --유효종료일자
+			    	                  AND B.COCNT_CD  = A.COCNT_CD               --코스트센터코드
+			                     )
+		   ]]>
+	</select>
+	
+	<!-- 총계정원장내역 기능영역 오류 체크 -->
+	<select id="chkGlBrkdnFnctDmnCd" parameterType="map" resultType="int">
+		/* Batch_Sql.chkGlBrkdnFnctDmnCd 배치 PARAM 조회 */
+		<![CDATA[ 
+			       SELECT /*+ PARALLEL(8) */
+				           NVL(COUNT(1),0)
+				      FROM S_DH.TB_IDHFID01 --총계정원장내역
+				     WHERE FSCYR = SUBSTR(#{finYm}, 1, 4)    --회계연도
+				       AND GL_CD = 'N1'                     --총계정원장코드 : I17기준데이터값
+				       AND SUBSTR(FNCT_DMN_CD,1,2) <> 'AZ'  --기능영역코드 : AZ001 등 소수점이자 금액 제외
+				       AND FNCT_DMN_CD NOT IN ( 'DA_P'
+				    	                         ,'DA_N'
+				    	                         ,'DM'  
+				    	                         ,'DC'  
+				    	                         ,'DI'  
+				    	                         ,'DP'  
+				    	                         ,'IM'  
+				    	                         ,'II'  
+				    	                         ,'IO' 
+				    	                         ,'IA'
+				    	                        )             --기능영역코드
+		   ]]>
+	</select>
+	
+	
+	<!-- 총계정원장내역 기능영역 오류 체크 -->
+	<select id="chkGlBrkdnPotflscCd" parameterType="map" resultType="int">
+		/* Batch_Sql.chkGlBrkdnPotflscCd 배치 PARAM 조회 */
+		<![CDATA[ 
+			    SELECT /*+ PARALLEL(8) */
+			           NVL(COUNT(1),0) 
+			      FROM S_EA.TB_IEAPRD01 --IFRS17_실제사업비계약별정보내역
+			     WHERE FIN_YM  = #{finYm} --마감년월
+			       AND DELT_YN = 'N'     --삭제여부
+			       AND TRIM(POTFL_SC_CD) IS NULL          --포트폴리오코드
+		   ]]>
+	</select>
+	
+	
+	<!-- 이전단계 배부금액 오류 체크(BTIEART022) -->
+	<select id="chkRmvlDistAmt01" parameterType="map" resultType="int">
+		/* Batch_Sql.chkRmvlDistAmt02 배치 PARAM 조회 */
+		<![CDATA[ 
+				    SELECT SUM(DECODE(MNG_SEQ_NO,'01',I17_WRKEX, 0))   --관리순서번호 = 01.채널별
+				           - SUM(DECODE(MNG_SEQ_NO,'00',I17_WRKEX, 0)) --관리순서번호 = 00.사업비기초
+				      FROM S_EA.TB_IEARTS02  --배부검증결과
+				     WHERE FIN_YM = #{finYm}  --마감년월
+		   ]]>
+	</select>
+	
+	<!-- 이전단계 배부금액 오류 체크(BTIEART023) -->
+	<select id="chkRmvlDistAmt02" parameterType="map" resultType="int">
+		/* Batch_Sql.chkRmvlDistAmt02 배치 PARAM 조회 */
+		<![CDATA[ 
+				    SELECT SUM(DECODE(MNG_SEQ_NO,'02',I17_WRKEX, 0))   --관리순서번호 = 02.PF별
+				           - SUM(DECODE(MNG_SEQ_NO,'01',I17_WRKEX, 0)) --관리순서번호 = 01.채널별
+				      FROM S_EA.TB_IEARTS02  --배부검증결과
+				     WHERE FIN_YM = #{finYm}  --마감년월
+		   ]]>
+	</select>
+	
+	<!-- 이전단계 배부금액 오류 체크(BTIEART024,25) -->
+	<select id="chkRmvlDistAmt03" parameterType="map" resultType="int">
+		/* Batch_Sql.chkRmvlDistAmt03 배치 PARAM 조회 */
+		<![CDATA[ 
+			    SELECT SUM(DECODE(MNG_SEQ_NO,'03',I17_WRKEX, 0))   --관리순서번호 = 03.계약그룹별
+			           - SUM(DECODE(MNG_SEQ_NO,'02',I17_WRKEX, 0)) --관리순서번호 = 02.PF별
+			      FROM S_EA.TB_IEARTS02  --배부검증결과
+			     WHERE FIN_YM = #{finYm}  --마감년월
+		   ]]>
+	</select>
+	
+	<!-- 이전단계 배부금액 오류 체크(BTIEART026) -->
+	<select id="chkRmvlDistAmt04" parameterType="map" resultType="int">
+		/* Batch_Sql.chkRmvlDistAmt04 배치 PARAM 조회 */
+		<![CDATA[ 
+			    SELECT SUM(DECODE(MNG_SEQ_NO,'04',I17_WRKEX, 0))   --관리순서번호 = 04.증번계정그룹별
+			           - SUM(DECODE(MNG_SEQ_NO,'03',I17_WRKEX, 0)) --관리순서번호 = 03.계약그룹별
+			      FROM S_EA.TB_IEARTS02  --배부검증결과
+			     WHERE FIN_YM = #{finYm}  --마감년월
+		   ]]>
+	</select>
+	
+	<!-- IFRS17_실제사업비계약별정보내역  실제사업비계약별정보내역의 동일 증번에 채널이 다른건 존재체크 -->
+	<select id="chkRalWrkexEqualsContno" parameterType="map" resultType="int">
+		/* Batch_Sql.chkRalWrkexEqualsContno 배치 PARAM 조회 */
+		<![CDATA[ 
+			    SELECT /*+ PARALLEL(8) */
+			           NVL(SUM(COUNT(1)),0) 
+			      FROM (SELECT DISTINCT RAL_WRKEX_CHNL_CD --실제사업비채널코드
+			                 , POTFL_SC_CD                --포트폴리오구분코드
+			                 , CONGR_ID                   --계약집합ID
+			                 , CONT_NO                    --계약번호
+			              FROM S_EA.TB_IEAPRD01 --IFRS17_실제사업비계약별정보내역
+			             WHERE FIN_YM  = #{finYm}  --마감년월
+			               AND DELT_YN = 'N'      --삭제여부
+			               AND TRIM(RAL_WRKEX_CHNL_CD) IS NOT NULL --실제사업비채널코드  /* 실제사업비채널코드가 NULL 발생하여 체크와 집계에서 제외 20210903 */
+			        )
+			    GROUP BY CONT_NO  --계약번호
+			    HAVING COUNT(1) > 1
+		   ]]>
+	</select>
+	
+	<!-- 배치 체크 로직 추가 20230628 END -->
+	
+</mapper>

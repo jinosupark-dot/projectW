@@ -1,0 +1,410 @@
+/*******************************************************************
+**   시스템명   : (부채결산)IFRS17
+**   업무명     : 보험/투자계약_관리
+**   설명       : 조정여부코드 = '2' 인 데이터 유의성테스트결과비율1,유의성테스트결과비율2,유의성기준비율 수정입력 화면
+**   최조작성자  : 박상준
+**   최조작성일  : 2021.03.02
+**   최종변경일  : 2021.06.18
+**   개정이력    :
+**    - 박상준 2021.03.02 신규작성
+**    - 박상준 2021.03.18 1차검증
+**    - 박상준 2021.04.27 2차표준화 
+**    - 박상준 2021.06.18 3차표준화  
+*******************************************************************/
+
+var recordCnt;
+var uploadCnt;
+var savetp=0;
+
+$(document).ready(function(){
+	//$.fn.loadCommonCode(['CRNCY_CD']);
+	/*2021.04.30 툴팁 추가*/
+	$("#imgToolTip").attr("title", parent.viewPath);
+	$($("h3")[0]).text($.fn.getMenuNm()+" :: ["+$.fn.getMenuId()+"]"); /*2021.06.15 3차표준화*/
+	
+    /* 2021.06.16 저장 권한제어 추가 */
+    $.fn.setBtnPermission([{"btnId":"#btn_save","type":"B"},    
+                           {"btnId":"#btn_exportExcel","type":"A"}]);
+	
+	// 마감년월 셋팅
+	var today = new Date();
+	var year = today.getFullYear();
+	var month = today.getMonth();
+	
+	var calcDate = new Date(year, month, "1");
+	calcDate.setMonth(month - 1);
+	
+	year = calcDate.getFullYear();
+	month = '' + (calcDate.getMonth()+1);
+	
+	if (month.length < 2) month = '0' + month;
+	
+	var finYm = $.fn.monthFormat((year+month),'-');
+	
+	$('#finYm').val(finYm);    // 마감년월
+	$('#finYm').focus();
+	
+	//event 초기화
+	initEvent();
+	
+	//그리드 초기화	
+	initGrid();
+});
+
+
+function initEvent() {	
+	//마감년월 입력창 blur
+	$('#finYm').on('blur', function(e) {
+		//빈값 체크
+		if($.fn.isEmpty(this.value)) {
+			return;
+		}
+		
+		//날짜형식 체크
+		if($.isValidYm(this.value)) {
+			$(this).val($.fn.monthFormat(this.value));
+		} else {
+			$.fn.msgBox('마감년월의 날짜 형식이 맞지 않습니다. 다시 입력해주세요.');
+			$(this).focus();
+		}
+	});
+	
+	//마감년월 달력버튼 click
+	$('#btn_finYm').on('click', function(e){
+		$('#finYm').datepicker('show');
+	});
+	
+	// 조회
+	$('#btn_search').on('click', function(e){
+		SelectInsRIvtContMngInqrList();
+	});
+	
+	// 저장
+	$('#btn_save').on('click', function(e){
+		saveGridDataAll();
+	});
+	
+//	// 행추가
+//	$('#btn_addGrid').on('click', function(e){
+//		addGridData();
+//	});
+	
+	// 엑셀다운로드
+	$('#btn_exportExcel').on('click', function(e){		
+		var paramObj = {};
+		paramObj.id = 'gridDiv';
+		paramObj.fileName = '보험계약투자계약분류조정.xlsx';     // 다운로드할 파일명
+		paramObj.applyItemTemplate = false;                    // 그리드 컬럼 디스플레이 포멧터 적용 출력 여부(해당엑셀로 Import하기 위해서는 false)
+		$.fn.exportGridExcel(paramObj);
+	});
+	
+	// 엑셀업로드 
+	$('#btn_loadExcel').on('click', function(e){
+		loadExcel();
+	});
+	
+	//조회조건 엔터키 조회
+	$("#finYm").on("keypress", function(e) {
+		if(e.keyCode == 13) {
+			$("#btn_search").click();
+			return false;
+		}
+	});
+}
+
+
+function initGrid(){
+	
+	// jsGrid 빈 테이블 생성
+	var gridObject = new ComJsGrid({
+		id: 'gridDiv',
+		height: 600,
+		editing: true,
+		sorting: true,
+		paging: true,
+		selectHiglight:false,
+		deleteConfirm: '삭제하시겠습니까?',
+		controller : {
+			updateItem : function(item) {	//Edit모드에서 적용 아이콘 또는 updateItem API를 이용시 진입
+				//debugger;
+				var status = 'u';	//수정
+				if(item.status == 'c' || item.status == 'e' ) {	//신규, 엑셀업로드는 c,e상태 유지 후 데이터 수정
+				} 
+				else if(item.status == 'dd'){	//삭제신청으로 요청되면 '삭제'로 최정 변경처리
+					item.status = 'd';
+				} 
+				else {
+					item.status = status;
+				}
+				return item;
+			},
+			deleteItem : function(item) { //grid 삭제 아이콘 클릭 또는 deleteItem API이용시 진입
+				//deleteItem에서 dd로 -> updateItem에서 최종 d상태가 됨.
+				var status = 'dd';	//삭제 신청
+				//debugger;
+				if (item.status == 'c' || item.status == 'e' ) {	//신규,엑셀업로드 입력대상건으로 그리드만 삭제처리
+					jsGridDeletionFailed = false;
+				} else {	//u,d 는 삭제 상태로 처리 -> updateItem에서 최종  삭제대기가 됨.
+					jsGridDeletionFailed = true;
+					item.status = status;
+					$('#gridDiv').jsGrid('updateItem', item);
+					return item;
+				}
+			}
+		},
+	   fields: [
+			{ name: 'finYm', title:'마감년월', css:'cell', type: 'text', width: 60, align:'center', editing: false},			
+			{ name: 'contNo', title:'계약번호', css:'cell', type: 'text',  width: 60, align:'center', editing: false},		
+			{ name: 'exnexDvdScCd', title:'유무배당<br>구분코드', css:'cell', type: 'text',  width: 100, align:'center', editing: false},			
+			{ name: 'sglTestRsltRto01', title:'유의성테스트<br>결과비율1', css:'cell', type: 'text',  width: 140, align:'right', editing: false},
+			{ name: 'sglTestRsltRto02', title:'유의성테스트<br>결과비율2', css:'cell', type: 'text',  width: 140, align:'right', editTemplate:function(value, item) {
+				var $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);					
+					$result.on('keydown', function(e){
+						if(e.which === 13){
+							$('#gridDiv').jsGrid('updateItem');
+							return false;
+						}
+					});
+					
+					return $result;
+				}, 
+				validate: [{validator:'required', message:'[유의성테스트결과비율2]'}]
+			},
+			{ name: 'sglTestStndRto', title:'유의성테스트<br>기준비율', css:'cell', type: 'text',  width: 130, align:'right', editing: false},
+			{ name: 'insrIvtContClsfCd', title:'보험투자계약<br>분류코드', css:'cell', type: 'text',  width: 130, align:'center', editing: false},
+			{ name: 'ctrlYnCd', title:'조정여부코드', css:'cell', type: 'text',  width: 150, align:'center', editing: false},
+			
+			{ name: 'i17AplcObjContYnCd', title:'IFRS17적용<br>대상계약여부코드', css:'cell', type: 'select',  width: 150, align:'center', 
+				items: [ 
+					{Name:"1", Id: "1"},
+					{Name:"2", Id: "2"}],
+				textField: 'Name',
+				valueField: 'Id',  
+				validate: [{validator:'required', message:'[IFRS17적용대상계약여부코드]'}]
+			},
+			
+			{ name: 'regntEno', title:'등록자사번', css:'cell', type: 'text',  width: 65, align:'center', editing: false},
+			{ name: 'regDtm', title:'등록일', css:'cell', type: 'text',  width: 60, align:'center', editing: false, itemTemplate:function(value, item) {
+				return $.fn.dateFormat(value, "-");			
+			}},	
+			{ name: 'trtrEno', title:'처리자사번', css:'cell', type: 'text',  width: 65, align:'center', editing: false},
+			{ name: 'trtDtm', title:'처리일', css:'cell', type: 'text',  width: 60, align:'center', editing: false, itemTemplate:function(value, item) {
+				return $.fn.dateFormat(value, "-");			
+			}},
+			{ name: 'status', title:'상태', css:'cell', type: 'text', width: 40, align:'center', editing: false, itemTemplate:function(value, item) {
+				return $.fn.getGridRowStatusName(value);			
+			}},
+			{ name: 'gridManupulate', title:'그리드조작', css:'cell', type: 'control', width: 70, align:'left',editing: true , deleteButton : false}
+		]
+	});	
+
+	//그리드 생성
+	gridObject.gridCreate();
+}
+
+
+// 조회
+function SelectInsRIvtContMngInqrList() {			
+	var finYm = $.replaceAll($('#finYm').val().trim(), '-',''); // 마감년월
+	
+	if ($.fn.isEmpty(finYm)) {
+		$.fn.msgBox('마감년월을 입력하시기 바랍니다.');
+		return false;
+	}
+	
+	var reqParam = {};
+	reqParam.finYm = finYm;
+
+	$.callAjax(reqParam, '/ca/pr/capr111m/selectInsrIvtContMngInqrList.do')
+	.done(function(data) {	
+		$('#gridDiv').jsGrid('reset');
+		var listData = data.list;  	  	    //서버로 받아온 데이터 리스트
+		//그리드 바인딩
+		$('#gridDiv').jsGrid('loadData', listData).done(function(){
+		});		
+		
+		// 0건 그리드 메세지 처리부분
+		if(listData.length == 0){
+			$.fn.getReturnValue("gridDiv");
+		}
+		
+	}).fail(function(data){
+		$.fn.msgBox('목록 조회가 실패했습니다.');
+	});		
+}
+
+
+// 저장
+function saveGridDataAll() {
+	if(savetp == '1')
+	{
+		$.fn.msgBox('기존에 없던 계약번호가 존재합니다. \n\n 계약번호를 확인하시기 바랍니다.');
+		return;
+	}
+	
+	var editRowClass = $("#gridDiv").jsGrid("option", "editRowClass");
+	if($("." + editRowClass).length > 0) {
+		$("#gridDiv").jsGrid("updateItem");
+	}
+	
+	//전체 데이터
+	var gridData = $('#gridDiv').jsGrid('option', 'data');
+	
+	var saveList = [];
+	//c,u,d,e 건만 추출 후 저장 처리
+	for (var i=0; i<gridData.length; i++) {
+		var item = gridData[i];
+		
+		if (item.status == 'e') {
+			if(! isValid(i,item)) { 
+				return; 
+			}
+			
+			saveList.push(item);
+		} 
+		else if (item.status == 'c' || item.status == 'u' || item.status == 'd') {
+			if(!isValid(i, item)) { return; }
+			saveList.push(item);
+		}
+	}
+	
+	if (saveList.length <= 0) {
+		$.fn.msgBox('저장할 데이터가 없습니다.');
+		return;
+	}
+	
+	$.fn.msgBox('데이터를 저장하시겠습니까?', function (obj) {
+		if (obj.btn_ok) {
+			$.callAjax({'list':JSON.stringify(saveList)}, '/ca/pr/capr111m/saveInsrIvtContMngInqrList.do')
+			.done(function(data) {
+				if(data.result == '1') {
+					$.fn.msgBox('정상적으로 처리되었습니다.');
+					SelectInsRIvtContMngInqrList();
+				}
+			}).fail(function(data){
+				$.fn.msgBox('데이터 저장이 실패했습니다.');
+			});
+		}
+	}, 2);
+}
+
+
+// 행추가
+function addGridData() {
+	var dataList = $("#gridDiv").jsGrid("option", "data");
+	var seq = dataList.length + 1;
+	
+	$('#gridDiv').jsGrid('insertItem', 
+		{ 
+		
+		  'seq': seq,
+		  'status': 'c',
+		  'finYm': $.replaceAll($('#finYm').val().trim(), '-',''),
+		  'contNo': '',
+		  'exnexDvdScCd': '',
+		  'sglTestRsltRto01': '',
+		  'sglTestRsltRto02': '',
+		  'sglTestStndRto': '',
+		  'insrContIvtContClsfCd': '',
+		  'ctrlYnCd': '',
+		  'i17AplcObjContYnCd': '',		  
+		  'regntEno':'',
+		  'regDtm': '',
+		  'trtrEno':'',
+		  'trtDtm': ''
+		}
+	);	
+}
+
+// 데이터 저장전 validation 체크
+function isValid(rowIndex, item) {
+	
+	var rowIdx = rowIndex+1;
+	if ($.fn.isEmpty(item.finYm)) {
+		$.fn.msgBox(rowIdx + '행의 마감년월을 입력하시기 바랍니다.');
+		return false;
+	}
+	
+	if (item.finYm.trim().length != 6) {
+		$.fn.msgBox(rowIdx + '행의 마감년월 입력 자리수를 확인해 주시기 바랍니다.');
+		return false;
+	}	
+	 
+	//상관계수는 부동소수점도 허용되는지 확인함
+	if(/^[-]?[0-9]*\.?\d{0,8}$/.test(item.sglTestRsltRto02) == false){
+		$.fn.msgBox(rowIdx + '번째 유의성테스트결과비율2는 숫자만 입력하시기 바랍니다.');
+		return false;		
+	}	
+	
+	if (item.sglTestRsltRto02.trim().length > 24) {
+		$.fn.msgBox(rowIdx + '행의 유의성테스트결과비율2 입력 자리수를 확인해 주시기 바랍니다.');
+		return false;
+	}		
+//	if ($.fn.isEmpty(item.crncyCd)) {
+//		$.fn.msgBox(rowIdx + '행의 화폐코드를 입력하시기 바랍니다.');
+//		return false;
+//	}
+	
+//	if ($.fn.isEmpty(item.psgMms)) {
+//		$.fn.msgBox(rowIdx + '행의 시점을 입력하시기 바랍니다.(허용범위: 1~1200)');
+//		return false;
+//	}
+//	
+//	if (item.psgMms <= 0 || item.psgMms > 1200) {
+//		$.fn.msgBox(rowIdx + '행의 시점이 허용범위를 초과한 입력값입니다.(허용범위: 1~1200)');
+//		return false;
+//	}
+//	
+//	if ($.fn.isEmpty(item.ifrsDiscRat)) {
+//		$.fn.msgBox(rowIdx + '행의 할인율을 입력하시기 바랍니다.');
+//		return false;
+//	}
+	
+	return true;
+}
+
+
+// 업로드
+function loadExcel() {
+	var paramObj = {};
+	paramObj.id = 'gridDiv';                 // 그리드 ID
+	paramObj.callbackFn = function(data) {   // 그리드 바인딩 후 후처리 함수
+		//$.fn.msgBox('정상적으로 로드하였습니다.');		
+		compr();
+	};
+	
+	$.fn.loadGridExcel(paramObj);
+}
+
+function compr() {	
+	
+	var reqParam = {};
+	//초기화
+	recordCnt = 0;
+	uploadCnt = 0;
+	
+	var finYm = $.replaceAll($('#finYm').val().trim(), '-',''); // 마감년월
+	reqParam.finYm = finYm;
+
+	$.callAjax(reqParam, '/ca/pr/capr111m/selectInsrIvtContMngInqrCnt.do')
+	.done(function(data) {	
+		//console.log(data.rcrdFgr);
+		recordCnt = data.rcrdFgr;
+		
+		var gridData = $('#gridDiv').jsGrid('option', 'data');
+		uploadCnt = gridData.length;
+		
+		if(uploadCnt != recordCnt){
+			savetp = '1';
+		    $.fn.msgBox('기존에 없던 계약번호가 존재합니다. \n 계약번호를 확인하시기 바랍니다.');		    
+		}
+		else
+		{
+			savetp = '0'; 
+			$.fn.msgBox('정상적으로 로드하였습니다.');
+		}		
+	}).fail(function(data){		
+	});	
+	
+}
+

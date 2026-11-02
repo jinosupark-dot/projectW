@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.UserMapper">
+
+	<!-- 사용자 전체 리스트 조회 SQL -->
+	<select id="selectList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* User_Sql.selectList 사용자 조회  */
+			USER_ID										/* 사용자ID */
+			,USER_ENO                                   /* 사용자사번 */
+			,USER_NM                                    /* 사용자명 */
+			,PSWD_CHG_YMD                               /* 비밀번호변경일자 */
+			,USER_INFO_TYP_CD                           /* 사용자정보유형코드 */
+			,STAT_CD                                    /* 상태코드 */
+			,ECMP_YMD                                   /* 입사일자 */
+			,RTR_YMD                                    /* 퇴사일자 */
+			,ORG_NO                                     /* 조직번호 */
+			,JOBPS_ID                                   /* 직위ID */
+			,DUTY_ID                                    /* 직책ID */
+			,PSWD_ENCR                                  /* 비밀번호암호화 */
+			,RMVL_PSWD_ENCR                             /* 이전비밀번호암호화 */
+			,PSWD_ERR_CUML_NTS                          /* 비밀번호착오누적횟수 */
+			,REGNT_ENO                                  /* 등록자사번 */
+			,TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM    /* 등록일시 */
+			,TRTR_ENO                                   /* 처리자사번 */
+			,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM    /* 처리일시 */
+		FROM S_MG.TB_IMGSYF01	/* 사용자기본 */
+		ORDER BY USER_ID
+		]]>
+	</select>
+
+	<!-- 로그인 사용자 정보를 조회 SQL -->
+	<select id="selectUserInfoByLogin" parameterType="map" resultType="userInfoVO">
+		<![CDATA[
+		SELECT /* User_Sql.selectUserInfoByLogin 로그인 사용자 조회  */
+			A.USER_ID									/* 사용자ID */      
+			,A.USER_ENO                              	/* 사용자사번 */      
+			,A.USER_NM                               	/* 사용자명 */       
+			,A.PSWD_CHG_YMD                          	/* 비밀번호변경일자 */   
+			,A.USER_INFO_TYP_CD                      	/* 사용자정보유형코드 */  
+			,A.STAT_CD                               	/* 상태코드 */       
+			,A.ECMP_YMD                              	/* 입사일자 */       
+			,A.RTR_YMD                               	/* 퇴사일자 */       
+			,A.ORG_NO                               	 /* 조직번호 */       
+      		,(SELECT ORG_NM 
+      		    FROM EAGLE.TB_SAOGF01	/* 조직기본 */ 
+      		   WHERE ORG_NO = A.ORG_NO) AS ORG_NM		/* 조직명 */
+			,A.JOBPS_ID									/* 직위ID */
+			,A.DUTY_ID									/* 직책ID */
+			,A.PSWD_ENCR								/* 비밀번호암호화 */
+			,A.RMVL_PSWD_ENCR							/* 이전비밀번호암호화 */
+			,A.PSWD_ERR_CUML_NTS						/* 비밀번호착오누적횟수 */
+			,A.REGNT_ENO								/* 등록자사번 */
+			,TO_CHAR(A.REG_DTM, 'YYYYMMDD') AS REG_DTM	/* 등록일시 */
+			,A.TRTR_ENO									/* 처리자사번 */
+			,TO_CHAR(A.TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+			,(SELECT TO_CHAR(NVL(MAX(LOIN_DTM),SYSDATE),'YYYY-MM-DD HH24:MI:SS') 
+			    FROM S_MG.TB_IMGSYL01	/* 로그인 이력 */
+			   WHERE USER_ID = #{userId}) AS PRE_LOGIN_DTM
+			,B.MDFC_PSB_YN AS PRC_PMS_YN				/* 수정가능여부 */
+		FROM S_MG.TB_IMGSYF01 A	/* 사용자기본 */
+	   INNER JOIN (SELECT USER_ID
+                        , MAX(NVL2(MDFC_PSB_YN,MDFC_PSB_YN,'N')) AS MDFC_PSB_YN
+                     FROM (SELECT #{userId} AS USER_ID	/* 사용자ID */ 
+                                , 'N' AS MDFC_PSB_YN	/* 수정가능여부 */ 
+                             FROM DUAL  
+                           UNION ALL
+                           SELECT USER_ID		/* 사용자ID */ 
+                                , MDFC_PSB_YN 	/* 수정가능여부 */
+                             FROM S_MG.TB_IMGSYF04	/* 역할별사용자기본 */
+                           )
+                    WHERE USER_ID = #{userId}
+                    GROUP BY USER_ID) B
+          ON A.USER_ID = B.USER_ID
+		WHERE A.USER_ID = #{userId}
+		]]>
+	</select>
+	
+	<!-- 비밀번호 오류 건수 조회 -->
+	<select id="selectUserPswdErrCnt" parameterType="map" resultType="int">
+		<![CDATA[
+		SELECT /* User_Sql.selectUserPswdErrCnt 비밀번호 오류 건수 조회  */
+		       SUM(PSWD_ERR_CUML_NTS) AS PSWD_ERR_CUML_NTS
+		  FROM (
+				SELECT 0 AS PSWD_ERR_CUML_NTS 	/* 비밀번호착오누적횟수 */
+				  FROM DUAL
+				UNION ALL
+				SELECT PSWD_ERR_CUML_NTS		/* 비밀번호착오누적횟수 */
+				  FROM S_MG.TB_IMGSYL03	/* 로그인 실패횟수 이력 */
+				 WHERE USER_ID = #{userId}
+			   )
+		]]>
+	</select>
+	
+	<!-- 로그인 오류 등록 -->
+	<insert id="insertLoginErrInfo" parameterType="map">
+	    INSERT /* User_Sql.insertLoginErrInfo 로그인 저장  */ 
+	    INTO S_MG.TB_IMGSYL02	/* 로그인 실패 이력 */
+		( LOIN_DTM,		/* 로그인일시 */
+		  MSTK_INFO_ID,	/* 오류정보ID */
+		  USER_ID,		/* 사용자ID */
+		  MSTK_CNTNT	/* 오류내용 */
+		)
+		VALUES
+		( 
+		  CURRENT_TIMESTAMP ,
+		  #{mstkInfoId} ,
+		  #{userId} ,
+		  #{mstkCntnt})
+	</insert>
+	
+	<!-- 비밀번호 오류 카운트 업데이트 -->
+	<update id="insertPswdErrCnt" parameterType="map">
+	    MERGE /* User_Sql.insertPswdErrCnt 비밀번호 오류 카운트 저장  */  
+	    INTO S_MG.TB_IMGSYL03	/* 로그인 실패횟수 이력 */
+	    USING DUAL
+           ON (USER_ID = #{userId})
+	     WHEN MATCHED THEN 
+	          UPDATE SET PSWD_ERR_CUML_NTS = PSWD_ERR_CUML_NTS + 1,
+			             TRT_DTM = CURRENT_TIMESTAMP
+	     WHEN NOT MATCHED THEN
+	          INSERT
+				( USER_ID,			/* 사용자ID */
+                  PSWD_ERR_CUML_NTS	/* 비밀번호착오누적횟수 */
+                )	
+				VALUES
+				( 
+				  #{userId} ,
+				  1)
+	</update>
+	
+	<!-- 비밀번호 오류 카운트 초기화 -->
+	<update id="insertPswdErrCntInit" parameterType="map">
+	    MERGE /* User_Sql.insertPswdErrCntInit 비밀번호 오류 카운트 초기화  */  
+	    INTO S_MG.TB_IMGSYL03	/* 로그인 실패횟수 이력 */
+	    USING DUAL
+           ON (USER_ID = #{userId})
+	    WHEN MATCHED THEN 
+	        UPDATE SET PSWD_ERR_CUML_NTS = 0,
+				   TRT_DTM = CURRENT_TIMESTAMP
+	    WHEN NOT MATCHED THEN
+	        INSERT
+				( USER_ID,			/* 사용자ID */
+                  PSWD_ERR_CUML_NTS	/* 비밀번호착오누적횟수 */
+                )
+				VALUES
+				( 
+				  #{userId} ,
+				  0)
+	</update>
+	
+	<!-- 로그인시 로그세션ID값 업데이트 -->
+	<update id="insertLogSesnIdVal" parameterType="map">
+	    MERGE INTO /* User_Sql.insertPswdErrCntInit 로그세션ID값 업데이트  */   
+	    S_MG.TB_IMGSYL04	/* 로그인 세션정보 관리 */
+	    USING DUAL
+           ON (USER_ID = #{userId})
+	     WHEN MATCHED THEN 
+	          UPDATE SET LOG_SESN_ID_VAL = #{logSesnIdVal},
+			             TRTR_ENO = #{regntEno},
+			             TRT_DTM = CURRENT_TIMESTAMP
+	     WHEN NOT MATCHED THEN
+	          INSERT
+				( USER_ID,				/* 사용자ID */			
+                  LOG_SESN_ID_VAL,      /* 로그세션ID값 */
+                  REGNT_ENO,            /* 등록자사번 */
+                  REG_DTM,              /* 등록일시 */
+                  TRTR_ENO,             /* 처리자사번 */
+                  TRT_DTM               /* 처리일시 */
+                )
+				VALUES
+				( 
+				  #{userId},
+				  #{logSesnIdVal},
+				  #{regntEno},
+				  CURRENT_TIMESTAMP,
+				  #{regntEno},
+				  CURRENT_TIMESTAMP)
+	</update>
+	
+	<!-- 타임아웃시 로그세션ID값 업데이트 -->
+	<update id="updateLogSesnIdVal" parameterType="map">
+		UPDATE /* User_Sql.updateLogSesnIdVal 로그세션ID값 업데이트  */   
+		S_MG.TB_IMGSYL04	/* 로그인 세션정보 관리 */
+		SET LOG_SESN_ID_VAL = NULL,
+		    TRTR_ENO = #{regntEno},
+		    TRT_DTM = CURRENT_TIMESTAMP	
+		WHERE LOG_SESN_ID_VAL = #{logSesnIdVal}
+	</update>
+	
+	<!-- 로그인시 로그세션ID값 조회 -->
+	<select id="selectLogSesnIdVal" parameterType="map" resultType="String">
+		<![CDATA[
+		SELECT /* User_Sql.selectLogSesnIdVal 로그세션ID값 조회  */ 
+		       LOG_SESN_ID_VAL	/* 로그세션ID값 */
+		  FROM S_MG.TB_IMGSYL04	/* 로그인 세션정보 관리 */
+		 WHERE USER_ID = #{userId}
+		   AND LOG_SESN_ID_VAL IS NOT NULL
+		]]>
+	</select>
+	
+	<!-- 로그인 여부 조회 -->
+	<select id="selectLogSesnIdExist" parameterType="map" resultType="String">
+		<![CDATA[
+		SELECT /* User_Sql.selectLogSesnIdExist 로그인 여부 조회  */ 
+		       COUNT(USER_ID) AS LOGIN	/* 사용자ID */
+		  FROM S_MG.TB_IMGSYL04	/* 로그인 세션정보 관리 */
+		 WHERE USER_ID = #{userId}
+		   AND LOG_SESN_ID_VAL = #{logSesnIdVal}
+		]]>
+	</select>
+	
+</mapper>

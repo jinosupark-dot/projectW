@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!--- Section -->
+<section> 
+  
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">사업비 배부결과 조회</h3>
+      </div>
+      
+           
+      <!-- searchform -->
+      <div class="search-form-wrap-d">
+        <div class="search-item">
+       	  <!-- 1row -->
+          <div class="search-item-inner">
+            <div class="item wi290px" >
+              <p class="title">마감년월</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>
+           <div class="item wi290px">
+              <p class="title">배부유형</p>
+              <div >
+                <select class="wi130px">
+                  <option>2차 증번(FSS)별</option>
+                  <option>채널별</option>
+                  <option>PF 별</option>
+                  <option>계약그룹별</option>
+                  <option>1차 증번별</option>
+                 
+
+                </select>
+              </div>
+            </div>
+            <div class="item wi290px">
+              <p class="title">계정번호</p>
+              <div>
+                <input type="text" class="wi130px">
+              </div>
+            </div>            
+          </div>
+          <!-- 1row -->
+          <!-- 2row -->
+          <div class="search-item-inner">
+            <div class="item wi290px">
+              <p class="title">코스트센터</p>
+              <div>
+                <input type="text" class="wi130px">
+              </div>
+            </div>
+           <div class="item wi290px">
+              <p class="title">사업비배부채널</p>
+              <div>
+                <select>
+                  <option>CHI-AD</option>
+                </select>
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">영업채널</p>
+              <div>
+                <select class="wi130px">
+                  <option>01.FC</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- 2row -->  
+          <!--3row-->
+          <div class="search-item-inner">
+            <div class="item wi290px">
+              <p class="title">포트폴리오코드</p>
+              <div>
+                <input type="text" value="2036030021" class="wi130px">
+              </div>
+            </div>
+           <div class="item wi290px">
+              <p class="title">계약그룹ID</p>
+              <div>
+                <select>
+                  <option>CHI-AD</option>
+                </select>
+              </div>
+            </div>
+           <div class="item wi290px">
+              <p class="title">FSS코드</p>
+              <div>
+                <select class="wi130px">
+                  <option>01.비례수당</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">계약번호</p>
+              <div>
+                <select>
+                  <option>01.비례수당</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!--3row-->       
+        </div>
+        <div class="search-item-btn"> 
+        	<!--row 갯수가 1줄 일경우  class="", row 갯수가 2줄일 경우 class="p2", rows 갯수가 3줄일 경우 class="p3"  -->
+        	<a href="javascript:void(0);" class="p3"><i class="xi-search xi-x"></i> 조회</a> 
+        </div>
+      </div>
+      <!-- searchform 상세  -->
+    </div>
+    <!-- btn -->
+    <div class="btnWrap txtar">
+      <button class="btn-xlsdown"><span>엑셀다운로드</span></button>
+    </div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>마감년월</th>
+            <th>계정번호</th>
+            <th>계정명</th>
+            <th>코스트센터코드</th>
+            <th>코스트센터명</th>
+            <th>배부채널코드</th>
+            <th>대상사업비</th>
+            <th>계정그룹ID</th>
+            <th>계정그룹명</th>
+            <th>사업비항목코드</th>
+            <th>사업비항목명</th>
+            <th>사업비배부기준</th>
+            <th>영업채널코드</th>
+            <th>영업채널명</th>
+            <th>배부기준비율</th>
+            <th>배분사업비</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          	<td>2019-01</td>
+            <td>5350005410</td>
+            <td>특별계정수수료</td>
+            <td>2036030021</td>
+            <td>특별계정사업부</td>
+            <td>CHI-AD</td>
+            <td>11,500,000</td>
+            <td>SPAG0001</td>
+            <td>특별계정수수료</td>
+            <td>05</td>
+            <td>유지비</td>
+            <td>SKF34</td>
+            <td>01</td>
+            <td>FC</td>
+            <td>0</td>
+            <td>2085820.435</td>
+          </tr>  
+                 
+        </tbody>
+      </table>
+    </div>
+    <!-- table // --> 
+   
+  <!-- Content //--> 
+</section>
+<!--- Section -->
+
+</body>
+</html>

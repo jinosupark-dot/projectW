@@ -1,0 +1,167 @@
+package kr.co.wllife.acs.online.mg.sy.web;
+
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ModelAndViewDefiningException;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import kr.co.wllife.acs.online.fwk.com.cmm.util.FwkProperties;
+import kr.co.wllife.acs.online.fwk.com.cmm.util.SessionUtil;
+import kr.co.wllife.acs.online.fwk.rte.psl.dataaccess.util.FwkMap;
+import kr.co.wllife.acs.online.mg.sy.service.LoginService;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * @시스템명: IFRS17
+ * @업무명: 로그인 컨트롤러
+ * @설명: Login 를 위한 Controller Class 구현
+ * @최초작성자: 편신범
+ * @최초작성일: 2021. 1. 4.
+ * @최종변경일: 
+ * @개정이력: 
+ *  편신범 2021. 1. 4. 최초작성
+ */
+@Slf4j 
+@Controller
+@RequestMapping("/admin")
+public class LoginController{
+
+	// Y:중복불가 or N:중복가능
+	private String loginDblCk = FwkProperties.getProperty("login.double.check");
+	
+	@Resource(name = "loginService")
+    private LoginService loginService;
+	
+	/**
+	 * 
+	 * @설명: 로그인 페이지
+	 * @최초작성자: 장창환
+	 * @최초작성일: 2021. 2. 10.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  장창환 2021. 2. 10. 최초작성
+	 */
+	@RequestMapping("/luserLogin.do")
+	public String luserLogin(HttpServletRequest request, Model model) throws UnknownHostException {
+		log.debug("Call luserLogin!!!");
+		return "login";
+	}
+
+	/**
+	 * @설명: 로그인 세션 체크
+	 * @최초작성자: 류승민
+	 * @최초작성일: 2021. 6. 01.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: ModelAndView
+	 * @개정이력: 
+	 *  류승민 2021. 6. 01. 최초작성
+	 */
+	@RequestMapping("/doSessChk.do")
+	@ResponseBody
+	public ModelAndView doSessChk(@RequestParam Map<String, String> reqMap) throws Exception {
+
+		ModelAndView result;
+		
+		Map<String, Object>	resultMap = loginService.sessChk(reqMap);
+		
+		result = new ModelAndView("jsonView", resultMap);
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @설명: 로그인 처리 
+	 * @최초작성자: 장창환
+	 * @최초작성일: 2021. 2. 10.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: ModelAndView
+	 * @개정이력: 
+	 *  장창환 2021. 2. 10. 최초작성
+	 */
+	@RequestMapping("/doLogin.do")
+	@ResponseBody
+	public ModelAndView doLogin(HttpServletRequest request, @RequestParam Map<String, String> reqMap) throws Exception {
+		
+		ModelAndView result;
+		log.debug("====doLogin:" + reqMap);
+
+		Cookie[] cookies = request.getCookies();
+		String logSesnIdVal = "";
+		for(Cookie cookie : cookies) {
+			String cName = cookie.getName();
+			log.debug("====cookie  [name]" + cookie.getName() + " / [value]" + cookie.getValue());
+			if("JSESSIONID".equals(cName))
+				logSesnIdVal = cookie.getValue();
+		}
+		
+		reqMap.put("logSesnIdVal", logSesnIdVal);
+		Map<String, Object>	resultMap = loginService.login(reqMap);
+
+		// 중복로그인방지 처리
+//		EgovHttpSessionBindingListener listener = new EgovHttpSessionBindingListener();
+//		request.getSession().setAttribute(reqMap.get("userId"), listener);
+
+		result = new ModelAndView("jsonView", resultMap);
+		return result;
+	}
+
+	/**
+	 * 
+	 * @설명: 로그아웃 처리 
+	 * @최초작성자: 장창환
+	 * @최초작성일: 2021. 2. 10.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: ModelAndView
+	 * @개정이력: 
+	 *  장창환 2021. 2. 10. 최초작성
+	 */
+	@RequestMapping("/doLogout.do")
+	public ModelAndView doLogout(HttpServletRequest request, HttpServletResponse response, Model model) throws ModelAndViewDefiningException {
+	
+		log.debug("Call luserLogout!!!");
+
+		if("Y".equals(loginDblCk)) {
+			FwkMap reqMap = new FwkMap();
+			reqMap = null;
+			
+			try {
+				loginService.insertLogSesnIdVal(reqMap);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		ModelAndView result;
+		HttpSession session = request.getSession(false);
+		if(session != null) {
+			session.removeAttribute(SessionUtil.KEY_USER_INFO);
+			if(!session.isNew()) {
+				session.invalidate();
+			}
+		} 
+		HashMap resultMap = new HashMap();
+		resultMap.put("result", "1");
+		result = new ModelAndView("jsonView", resultMap);
+		return result;
+	}
+}

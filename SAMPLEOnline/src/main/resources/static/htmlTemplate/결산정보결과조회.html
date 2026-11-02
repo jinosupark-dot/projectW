@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!--- Section -->
+<section> 
+  
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">결산정보결과 조회</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap-d">
+        <div class="search-item">
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">마감년월</p>
+              <div>
+                <input type="text" class="" style="width:80px">
+                <img src="/img/icon_cal.png">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">업무구분</p>
+              <div>
+              	<select class="wi180px">
+               	 <option>전체</option>
+               	 <option>부채결산</option>
+               	 <option>사업비</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">테이블명</p>
+              <div>
+                <input type="text" class="wi120px">
+                <img src="/img/icon_search.png" >
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">테이블 ID</p>
+              <div>
+                <input type="text" class="wi120px">
+                <img src="/imgicon_search.png" >
+              </div>
+            </div>           
+          </div>
+        </div>        
+      </div>
+      <!-- searchform // --> 
+      
+      <!-- searchform 상세  -->
+      <div class="search-form-wrap-d mt10">
+        <div class="search-item">
+       	  <!-- 1row -->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">PK1</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">PK2</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK3</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK4</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK5</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+          </div>
+          <!-- 1row -->
+          <!-- 2row -->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">PK1</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">PK2</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK3</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK4</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK5</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+          </div>
+          <!-- 2row -->
+          <!-- 3row -->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">PK1</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">PK2</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK3</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK4</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">PK5</p>
+              <div>
+                <input type="text" value="">
+              </div>
+            </div>
+          </div>
+          <!-- 3row -->
+        </div>
+        <div class="search-item-btn"> 
+        	<!-- PK명이 1ROW 최대 5개 컬럼이 표시 되고, row 갯수가 1줄 일경우  class="", row 갯수가 2줄일 경우 class="p2", rows 갯수가 3줄일 경우 class="p3"  -->
+        	<a href="javascript:void(0);" class="p3"><i class="xi-search xi-x"></i> 조회</a> 
+        </div>
+      </div>
+      <!-- searchform 상세  -->
+    </div>
+    <!-- btn -->
+    <div class="btnWrap txtar"> <a href="javascript:void(0);" class="blue_btn"><img src="/imgbtn_excel.png" > 엑셀다운로드</a></div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>PK1</th>
+            <th>PK2</th>
+            <th>PK3</th>
+            <th>PK4 </th>
+            <th>속성정보1 </th>
+            <th>속성정보2 </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          	<td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>5</td>
+          </tr>
+          <tr>
+          	<td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+          	<td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+          	<td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+          	<td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    <!-- table // --> 
+    
+  </div>
+  <!-- content01//--> 
+  <!-- Content //--> 
+</section>
+<!--- Section -->
+
+</body>
+</html>

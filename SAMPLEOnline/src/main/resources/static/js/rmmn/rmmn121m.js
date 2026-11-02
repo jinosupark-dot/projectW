@@ -1,0 +1,507 @@
+/**
+ * @시스템명: IFRS17
+ * @업무명: 거래규모집계 JS
+ * @설명: 거래규모집계 JS
+ * @최초작성자: 김문
+ * @최초작성일: 2025.09.25
+ * @최종변경일:
+ * @개정이력:
+ *  김문 2025.09.25 최초작성
+
+ */
+$(document).ready(function(){
+	/* 2021.05.03 툴팁 추가 */
+	$("#imgToolTip").attr("title", parent.viewPath);
+	
+	/* 2021.06.14 화면ID 추가 */
+	$($("h3")[0]).text($.fn.getMenuNm()+" :: ["+$.fn.getMenuId()+"]");
+	
+    /* 2021.06.16 버튼권한처리 */
+    // 엑셀업로드, 행추가, 저장
+    var btnIdArr = ["btn_loadExcel", "btn_addGrid", "btn_save"];
+	var permArr = [];
+	for (var i = 0; i < btnIdArr.length; i++) {
+		permArr.push({
+			btnId : "#" + btnIdArr[i],
+			type : "B"
+		});
+	}
+    $.fn.setBtnPermission(permArr);
+    
+//	var today = new Date();
+//	var year  = today.getFullYear();
+//	var month = ("0" + (today.getMonth() + 1)).slice(-2);
+//	var toYmd = year + "-" + month + "-" + ("0" + today.getDate()).slice(-2);
+//	$("#inp_basDt").val(toYmd);
+	
+	// event 초기화
+	initEvent();
+	
+	// grid 초기화
+	initGrid();
+	
+	// 포커스(거래규모집계구분)
+	$("#inp_wkWfgCd").focus();
+});
+
+/**
+ * @설명: event 초기화
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function initEvent() {
+	// 조회
+	$("#btn_search").on("click", function(e){
+		selectDlScleList();
+	});
+	
+//	// 마감년월 from 달력
+//	$("#btn_basDt").on("click", function(e){
+//		$("#inp_basDt").datepicker("show");
+//	});
+	
+//	// 마감년월 Enter키 조회
+//	$("#inp_basDt").on("keydown", function(e){
+//		if(e.which === 13){
+//			//날짜형식 체크
+//			if($.isValidDate(this.value)) {
+//				$(this).val($.fn.dateFormat(this.value, "-"));
+//				selectDlScleList();
+//				return false;
+//			} else {
+//				$.fn.msgBox("날짜 형식이 맞지 않습니다.");
+//				$(this).focus();
+//			}
+//		
+//		}
+//	});
+	
+	// 마감년월 입력창 blur
+//	$("#inp_basDt").on("blur", function(e) {
+//		//빈값 체크
+//		if($.fn.isEmpty(this.value)) {
+//			return;
+//		}
+//	
+//		//날짜형식 체크
+//		if($.isValidDate(this.value)) {
+//			//$(this).val($.fn.monthFormat(this.value, "-"));
+//			$(this).val($.fn.dateFormat(this.value, "-"));
+//			selectDlScleList();
+//			return false;
+//		} else {
+//			$.fn.msgBox("날짜 형식이 맞지 않습니다.");
+//			$(this).focus();
+//		}
+//	
+//	});
+	
+	
+	// Enter키 조회
+	$("#inp_wkWfgCd").on("keydown", function(e){
+		if(e.which === 13){
+			selectDlScleList();
+		}
+	});
+
+	
+	
+	// 양식다운로드
+	$("#btn_exportExcel").on("click", function(e){
+		var gridId = "gridDivRins";
+		var fileName = "거래규모집계.xlsx";
+
+		var paramObj = {};
+		paramObj.id = gridId;
+		paramObj.fileName = fileName;         
+		paramObj.applyItemTemplate = false;   
+		$.fn.exportGridExcel(paramObj);
+	});
+	
+	// 양식업로드 
+	$("#btn_loadExcel").on("click", function(e){
+		var paramObj = {};
+		paramObj.id = "gridDivRins";
+		paramObj.callbackFn = function(data) {
+			if(data.result == "1") {
+				$.fn.msgBox("정상적으로 로드하였습니다.");
+			}
+		};
+		$.fn.loadGridExcel(paramObj);
+	});
+	
+	// 행추가
+	$("#btn_addGrid").on("click", function(e){
+		addGridData();
+	});
+	
+	// 저장
+	$("#btn_save").on("click", function(e){
+		saveGridDataAll();
+	});
+	
+	
+	
+	
+}
+
+/**
+ * @설명: jsGrid 빈 테이블 생성 
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @매개변수: 
+ * @반환값: 
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function initGrid(){
+	// jsGrid 빈 테이블 생성
+	var gridObject = new ComJsGrid({
+		id: "gridDivRins",
+		height: 600,
+		editing: true,
+		sorting: true,
+		paging: false,
+		selectHiglight: false,
+		deleteConfirm: "삭제하시겠습니까?",
+		controller : {
+			updateItem : function(item) {	//Edit모드에서 적용 아이콘 또는 updateItem API를 이용시 진입
+				//debugger;
+				var status = "u";	//수정
+				if(item.status == "c" || item.status == "e" ) {	//신규, 엑셀업로드는 c,e상태 유지 후 데이터 수정
+				} else if(item.status == "dd"){	//삭제신청으로 요청되면 "삭제"로 최정 변경처리
+					item.status = "d";
+				} else {
+					item.status = status;
+				}
+				return item;
+			},
+			deleteItem : function(item) { //grid 삭제 아이콘 클릭 또는 deleteItem API이용시 진입
+				//deleteItem에서 dd로 -> updateItem에서 최종 d상태가 됨.
+				var status = "dd";	//삭제 신청
+				//debugger;
+				if (item.status == "c" || item.status == "e" ) {	//신규, 엑셀업로드 입력대상건으로 그리드만 삭제처리
+					jsGridDeletionFailed = false;
+				} else {	//u,d 는 삭제 상태로 처리 -> updateItem에서 최종  삭제대기가 됨.
+					jsGridDeletionFailed = true;
+					item.status = status;
+					$("#gridDivRins").jsGrid("updateItem", item);
+					return item;
+				}
+			}
+		},
+		//그리드 컬럼 정의 !!!
+	   fields: [
+		  { name: "rowNum", title:"순번", css:"cell", type: "text", width: 40, editing: false, align:"center"},
+		  { name: "basDt", title:"기준일자", css:"cell", type: "text", width: 80, align:"center", editTemplate:function(value, item) {
+			var $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);
+				// 신규, 엑셀업로드 외엔 수정 불가
+				if(item.status != "c" && item.status != "e") {
+					$result.attr("readonly", "true");
+				}
+				
+				$result.on("keydown", function(e){
+					if(e.which === 13){
+						$("#gridDivRins").jsGrid("updateItem");
+						return false;
+					}
+				});
+				return $result;
+			}, itemTemplate:function(value, item) {
+				return $.fn.dateFormat(value, "");			
+			}, validate: [
+					{validator:"required", message:"[기준일자] 필수 입력 항목입니다."}
+				  , {validator:"minLength", param:8, message:"[기준일자] 입력 자리수는 8자리입니다."}
+				  , {validator:"maxLength", param:8, message:"[기준일자] 입력 자리수는 8자리입니다."}
+				  , {validator:"pattern", message:"[기준일자] 날짜 형식이 맞지 않습니다.", validator:function(value) {return $.isValidDate(value);}}
+			   ]
+		  },
+		  { name: "wfgCd", title:"그룹내기관코드", css:"cell", type: "text", width: 80, editing: true, align:"center", editTemplate:function(value,item) {
+				var $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);
+				// 신규, 엑셀업로드 외엔 수정 불가
+				if(item.status != "c" && item.status != "e") {
+					$result.attr("readonly", "true");
+				}
+				
+				$result.on("click", function() {
+					$(this).select();
+				});
+				return $result;
+			},validate: [{validator:"required", message:"[그룹내기관코드] 필수 입력 항목입니다."}]
+	      },		  
+		  { name: "wkWfgCd", title:"작업그룹내기관코드", css:"cell", type: "text", width: 100, editing: true, align:"center", editTemplate:function(value,item) {
+				var $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);
+				// 신규, 엑셀업로드 외엔 수정 불가
+				if(item.status != "c" && item.status != "e") {
+					$result.attr("readonly", "true");
+				}
+				
+				$result.on("click", function() {
+					$(this).select();
+				});
+				return $result;
+			},validate: [{validator:"required", message:"[작업그룹내기관코드] 필수 입력 항목입니다."}]
+	      },
+	      { name: "bzPrftAm", title:"영업수익금액", css:"cell", type: "text", width: 100, align:"right", sorter:"number", itemTemplate:function(value, item) {
+              return $.fn.isEmpty(value) ? "0" : $.addCommaNumber(value.toString())}
+	      },
+	      { name: "agrAm", title:"약정금액", css:"cell", type: "text", width: 100, align:"right", sorter:"number", itemTemplate:function(value, item) {
+              return $.fn.isEmpty(value) ? "0" : $.addCommaNumber(value.toString())}
+	      },
+	      { name: "lndAm", title:"대여금액", css:"cell", type: "text", width: 100, align:"right", sorter:"number", itemTemplate:function(value, item) {
+              return $.fn.isEmpty(value) ? "0" : $.addCommaNumber(value.toString())}
+	      },
+	      { name: "brwAm", title:"차입금액", css:"cell", type: "text", width: 100, align:"right", sorter:"number", itemTemplate:function(value, item) {
+              return $.fn.isEmpty(value) ? "0" : $.addCommaNumber(value.toString())}
+	      },
+		  { name: "lstRgsDt", title:"최종등록일자", css:"cell", type: "text", width: 120, align:"center", editTemplate:function(value, item) {
+				var $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);
+					$result.on("keydown", function(e){
+						if(e.which === 13){
+							$("#gridDivRins").jsGrid("updateItem");
+							return false;
+						}
+					});
+					return $result;
+				}, itemTemplate:function(value, item) {
+					return $.fn.dateFormat(value, "");			
+				}, validate: [
+					    {validator:"minLength", param:8, message:"[최종등록일자] 입력 자리수는 8자리입니다."}
+					  , {validator:"maxLength", param:8, message:"[최종등록일자] 입력 자리수는 8자리입니다."}
+					  , {validator:"pattern", message:"[최종등록일자] 날짜 형식이 맞지 않습니다.", validator:function(value) {return $.isValidDate(value);}}
+				   ]
+		  },
+//	      { name: "dlScleValTxt", title:"거래규모값", css:"cell", type: "text",  width: 150, align:"right", editing: true},
+//	      { name: "indNmrtValTxt", title:"지표분자값내용", css:"cell", type: "text",  width: 150, align:"right", editing: true},
+//	      { name: "indDnmnValTxt", title:"지표분모값내용", css:"cell", type: "text",  width: 150, align:"right", editing: true},
+//		  { name: "nmrtAmt", title:"분자", css:"cell", type: "text",  width: 100, align:"right", editing: true},
+//		  { name: "dnmnAmt", title:"분모", css:"cell", type: "text",  width: 100, align:"right", editing: true},
+//		  { name: "dnmnDtl1Amt", title:"분모상세항목1", css:"cell", type: "text",  width: 100, align:"right", editing: true},
+//		  { name: "dnmnDtl2Amt", title:"분모상세항목2", css:"cell", type: "text",  width: 100, align:"right", editing: true},
+//		  { name: "dnmnDtl3Amt", title:"분모상세항목3", css:"cell", type: "text",  width: 100, align:"right", editing: true},
+//		  { name: "regntEno", title:"등록자사번", css:"cell", type: "text",  width: 100, align:"center", editing: true},
+//		  { name: "regDtm", title:"등록일시", css:"cell", type: "text",  width: 200, align:"center", editing: true},
+//		  { name: "trtrEno", title:"처리자사번", css:"cell", type: "text",  width: 100, align:"center", editing: true},
+//		  { name: "trtDtm", title:"처리일시", css:"cell", type: "text",  width: 200, align:"center", editing: true},
+		  
+		  //편집공통	
+		  { name: "status", title:"상태", css:"cell", type: "text", width: 50, align:"center", editing: false, itemTemplate:function(value, item) {
+			  	return $.fn.getGridRowStatusName(value);			
+		  		}
+		  },
+		  { name: "gridManupulate", title:"그리드조작", css:"cell", type: "control", width: 70, align:"left",editing: true}
+		  
+
+	   ] 
+	});	
+	
+	//그리드 생성
+	gridObject.gridCreate();
+}
+
+
+/**
+ * @설명: 신규생성, 수정, 삭제 처리한다.
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @매개변수: 
+ * @반환값: any
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function saveGridDataAll() {	
+	var gridData = {};
+	var editRowClass = {};
+	
+	editRowClass = $("#gridDivRins").jsGrid("option", "editRowClass");
+	if ($("." + editRowClass).length > 0) {
+		$("#gridDivRins").jsGrid("updateItem");
+	}
+	
+	gridData = $("#gridDivRins").jsGrid("option", "data");
+	//var coCdArr = $.fn.getGridCodeItem("RINS_CO_CD");
+	//var trtyCdArr = $.fn.getGridCodeItem("RINS_TRTY_CD");
+	
+	var saveList = [];
+	//c,u,d,e 건만 추출 후 저장 처리
+	for (var i = 0; i < gridData.length; i++) {
+		var item = gridData[i];
+		if (item.status == "e") {
+//			if(! isValid(i,item,coCdArr,trtyCdArr)) { 
+//				return; 
+//			}
+			saveList.push(item);
+		} 
+		else if (item.status == "c" || item.status == "u" || item.status == "d") {
+			saveList.push(item);
+		}
+	
+		//전체 딜리트 인서트 처리 
+//		saveList.push(item);
+	
+	}
+	
+	if (saveList.length <= 0) {
+		$.fn.msgBox("저장할 데이터가 없습니다.");
+		return;
+	}
+
+//	var basDt = $("#inp_basDt").val();
+//	basDt = basDt.replace('-','');
+//	basDt = basDt.replace('-','');
+	
+//console.log(" saveGridDataAll " + JSON.stringify(saveList) +"_"+basDt  );	
+
+console.log(" saveGridDataAll " + JSON.stringify(saveList)  );	
+
+	
+	$.fn.msgBox("데이터를 저장하시겠습니까?", function(obj) {
+		if (obj.btn_ok) {
+//			$.callAjax({"list" : JSON.stringify(saveList), "basDt": basDt}, "/rm/mn/rmmn121m/saveDlScleList.do")
+			$.callAjax({"list" : JSON.stringify(saveList)}, "/rm/mn/rmmn121m/saveDlScleList.do")
+			.done(function(data) {
+				if (data.result == "1") {
+					$.fn.msgBox("정상적으로 처리되었습니다.");
+					
+					// 재조회
+					selectDlScleList();
+				}
+			}).fail(function(data) {
+				$.fn.msgBox("데이터 저장이 실패했습니다.");
+			});
+		}
+	}, 2);
+}
+
+/**
+ * @설명: 그리드 하나의 행을 추가한다.
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function addGridData() {
+	var dataList = $("#gridDivRins").jsGrid("option", "data");
+	var rowNum = dataList.length + 1;
+	
+	$("#gridDivRins").jsGrid("insertItem", {
+		"rowNum" : rowNum,
+		"status" : "c"
+		,"basDt":""//기준일자
+		,"wfgCd":""//그룹내기관코드			
+		,"wkWfgCd":""//작업그룹내기관코드
+		,"bzPrftAm":""//영업수익금액
+		,"agrAm":""//약정금액
+		,"lndAm":""//대여금액
+		,"brwAm":""//차입금액	
+		,"lstRgsDt":""//최종등록일자			
+	}); 
+	
+	//마지막 페이지 이동
+	var pageLastText = $("#gridDivRins").jsGrid("option", "pageLastText");
+	$(".jsgrid-pager-nav-button a:contains('" + pageLastText + "')").click();
+}
+
+/**
+ * @설명: 엑셀업로드 후 데이터 저장 전 validation 체크
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @매개변수: rowIndex, item, coCdArr, trtyCdArr
+ * @반환값: boolean
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function isValid(rowIndex, item, coCdArr, trtyCdArr) {
+	var rowIndex = rowIndex + 1;
+	var isValidCoCd = false;
+	var isValidTrty = false;
+
+	if ($.fn.isEmpty(item.basDt)) {
+		$.fn.msgBox(rowIndex + "행의 기준일자를 입력하시기 바랍니다.");
+		return false;
+	}
+
+	if($.isValidDate(item.basDt)) {
+		//$(this).val($.fn.monthFormat(this.value, "-"));
+		$(item.basDt).val($.fn.dateFormat(item.basDt, ""));
+		//selectDlScleList();
+		return false;
+	} else {
+		$.fn.msgBox(rowIndex +"행의 날짜 형식이 맞지 않습니다.");
+		//$(this).focus();
+	}
+
+	
+/*	if ($.fn.isEmpty(item.basDt)) {
+		$.fn.msgBox(rowIndex + "행의 기준일자를 입력하시기 바랍니다.");
+		return false;
+	}
+*/	
+	if ($.fn.isEmpty(item.wkWfgCd)) {
+		$.fn.msgBox(rowIndex + "행의 거래규모구분코드를 입력하시기 바랍니다.");
+		return false;
+	}
+	if ($.fn.isEmpty(item.wfgCd)) {
+		$.fn.msgBox(rowIndex + "행의 그룹내기관코드를 입력하시기 바랍니다.");
+		return false;
+	}
+	
+	return true;
+}
+
+/**
+ * @설명: 목록을 조회한다.
+ * @최초작성자: 김문
+ * @최초작성일: 2026.04.28
+ * @최종변경일: 
+ * @매개변수: 
+ * @반환값: 
+ * @개정이력: 
+ *  김문 2026.04.28 최초작성
+ */
+function selectDlScleList(){
+//	var inpBasDt = $("#inp_basDt").val();
+//	inpBasDt = inpBasDt.replace("-","");
+//	inpBasDt = inpBasDt.replace("-","");
+	
+	var wkWfgCd = $("#inp_wkWfgCd").val();
+	
+//	if ($.fn.isNull(inpBasDt) ) {
+//		$.fn.msgBox("기준일자를 모두 입력하시기 바랍니다.");
+//		return false;
+//	}
+	
+	//전송 파라미터 세팅 
+	var req = {
+//			"basDt" : inpBasDt,
+			"wkWfgCd" : wkWfgCd
+	};
+	
+	//서비스url 
+	$.callAjax(req, "/rm/mn/rmmn121m/selectDlScleList.do")
+		.done(function(data) {
+			// 그리드 데이터 초기화
+			$("#gridDivRins").jsGrid("reset");
+
+			// 그리드 바인딩
+			var listData = data.list;
+			$("#gridDivRins").jsGrid("loadData", listData).done(function() {
+			});
+			
+			/* 2021.06.15 0건 그리드 메세지 처리 */
+			if(listData.length == 0) {
+				$.fn.getReturnValue("gridDivRins");
+			}
+			
+		}).fail(function(data){
+			console.log("fail to selectDlScleList");
+	});		
+}
+

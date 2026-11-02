@@ -1,0 +1,41 @@
+# ===================================================================
+# 0. 실행 환경 프로파일 지정 (loc: 로컬, dev: 개발, prod: 운영)
+# ===================================================================
+spring.profiles.active=loc
+
+spring.application.name=demo
+server.servlet.context-path=/
+
+# ===================================================================
+# JNDI DataSource 설정 (WAS 컨테이너 관리 데이터소스 연동) - context-datasource.xml 로 부터 설정함.
+# ===================================================================
+# spring.datasource.jndi-name=RS-IFRS17-01 # 현재 오류나서 주석처리함. 2026.10.23 김종호
+
+# Datasource - oracle
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.url=jdbc:oracle:thin:@//192.168.45.214:1522/XEPDB1
+
+
+# Mybatis : mybatis-config.xml 로 설정 이동
+mybatis.config-location=classpath:config/mybatis-config.xml
+# mybatis.mapper-locations=/mapper/**/*.xml
+mybatis.mapper-locations=classpath:/kr/co/wllife/**/mapper/*.xml
+
+# --- JSP View Resolver 설정 -> WebConfig.java 로 이동 ---
+# spring.mvc.view.prefix=/WEB-INF/views/ifrs17/
+# spring.mvc.view.suffix=.jsp
+
+# File upload 설정(Commons IO 연계) 
+# TO DO: 디렉토리 확인할 것.
+# app.file.upload-dir=C:/dev/project_w/upload/
+# app.file.temp-dir=C:/dev/project_w/temp/
+
+# 파일 업로드 (Multipart) 용량 제한 설정 (기존 maxUploadSize: 100MB) from web.xml
+spring.servlet.multipart.max-file-size=100MB
+spring.servlet.multipart.max-request-size=100MB
+
+# 임시 파일 저장 경로 (대용량 엑셀 임시 처리용)
+spring.servlet.multipart.location=C:/dev/project_w/temp/
+
+# 스프링 부트 기본 에러 페이지(Whitelabel Error Page) 비활성화
+server.error.whitelabel.enabled=false

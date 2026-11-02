@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">공지사항</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">
+            <div class="item">
+              <p class="title">게시일자</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+              <span class="text">~</span>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>
+            <div>
+              <input type="checkbox"><label>게시종료건 제외</label>
+            </div>
+            <div class="item">
+              <p class="title">게시자</p>
+              <div>
+                <input type="text" class="wi180px">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">게시부서</p>
+              <div>
+                <input type="text" class="wi180px">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- btn -->
+    <div class="btnWrap clearfix">
+      <h3 class="title fl">공지사항 리스트</h3>
+      <div class="fr">
+        <button class="btn-save"><span>저장</span></button>
+      </div>
+    </div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>순번</th>
+            <th>제목</th>
+            <th>게시일자</th>
+            <th>게시기간 </th>
+            <th>게시자</th>
+            <th>게시부서</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td class="tc">1</td>
+            <td><a href="#">2021년 02월 결산일정 공지</a></td>
+            <td class="tc">2021-01-29</td>
+            <td class="tc">
+              <select>
+                <option>일주일</option>
+              </select>
+            </td>
+            <td class="tc">홍길동</td>
+            <td class="tc">계리부</td>
+            <td class="tc"></td>
+          </tr>
+          <tr>          	
+            <td class="tc">2</td>
+            <td><a href="#">2021년 02월 결산일정 공지</a></td>
+            <td class="tc">2021-01-29</td>
+            <td class="tc">
+              <select>
+                <option>일주일</option>
+              </select>
+            </td>
+            <td class="tc">홍길동</td>
+            <td class="tc">계리부</td>
+            <td class="tc"></td>
+          </tr>
+          <tr>          	
+            <td class="tc">3</td>
+            <td><a href="#">2021년 02월 결산일정 공지</a></td>
+            <td class="tc">2021-01-29</td>
+            <td class="tc">
+              <select>
+                <option>일주일</option>
+              </select>
+            </td>
+            <td class="tc">홍길동</td>
+            <td class="tc">계리부</td>
+            <td class="tc"></td>
+          </tr>
+          <tr>          	
+            <td class="tc">4</td>
+            <td><a href="#">2021년 02월 결산일정 공지</a></td>
+            <td class="tc">2021-01-29</td>
+            <td class="tc">
+              <select>
+                <option>일주일</option>
+              </select>
+            </td>
+            <td class="tc">홍길동</td>
+            <td class="tc">계리부</td>
+            <td class="tc"></td>
+          </tr>
+          <tr>          	
+            <td class="tc">5</td>
+            <td><a href="#">2021년 02월 결산일정 공지</a></td>
+            <td class="tc">2021-01-29</td>
+            <td class="tc">
+              <select>
+                <option>일주일</option>
+              </select>
+            </td>
+            <td class="tc">홍길동</td>
+            <td class="tc">계리부</td>
+            <td class="tc"></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <p class="grid_control_btn txtar">
+      <button class="btn-grid-add"><span>행추가</span></button>
+    </p>
+    <!--공지사항 상세 내용-->
+    <div class="main_title clearfix">
+      <h3 class="title">공지사항 상세내용</h3>
+    </div>
+    <div class="">
+      <textarea cols="70" rows="15"></textarea>
+    </div>
+    <!--공지사하 상세 내용 //-->
+    <!-- table // --> 
+    
+  </div>
+  <!-- content01//--> 
+  <!-- Content //--> 
+</body>
+</html>

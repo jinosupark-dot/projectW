@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG" value="/LOG/WAS/logback" />
+	<appender name="rolling"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<prudent>true</prudent>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{HH:mm:ss.SSS} [%X{client_ip}] [%thread] %-5level [%logger] - %msg%n</pattern>
+			                <charset>UTF-8</charset>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG}/default.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>7</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%X{client_ip}] [%thread] %-5level [%logger] - %msg%n</pattern>
+			                <charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- Transaction Logging -->
+	<appender name="TransactionLog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<prudent>true</prudent>
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG}/transaction/transaction.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>365</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<!-- Transaction 로그 -->
+	<Logger name="TransactionLog" level="INFO"
+		additivity="false">
+		<appender-ref ref="TransactionLog" />
+	</Logger>
+	
+	<!-- log SQL with timing information, post execution -->
+	<Logger name="jdbc.sqltiming" level="ERROR" additivity="false">
+		<appender-ref ref="rolling" />
+		<appender-ref ref="console" />
+	</Logger>
+
+	<Logger name="resultsettable" level="ERROR" additivity="false">
+		<appender-ref ref="console" />
+		<appender-ref ref="rolling" />
+	</Logger>
+
+	<Logger name="java.sql" level="ERROR" additivity="false">
+		<appender-ref ref="rolling" />
+		<appender-ref ref="console" />
+	</Logger>
+
+	<Logger name="jdbc.resultset" level="ERROR" additivity="false">
+		<appender-ref ref="rolling" />
+		<appender-ref ref="console" />
+	</Logger>
+
+	<Logger name="jdbc.audit" level="ERROR" additivity="false">
+		<appender-ref ref="rolling" />
+		<appender-ref ref="console" />
+	</Logger>
+
+	<Logger name="jdbc.sqlonly" level="ERROR" additivity="false">
+		<appender-ref ref="console" />
+		<appender-ref ref="rolling" />
+	</Logger>
+
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<appender-ref ref="rolling" />
+	</root>
+</configuration>

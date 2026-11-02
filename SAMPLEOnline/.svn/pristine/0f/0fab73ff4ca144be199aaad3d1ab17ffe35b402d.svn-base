@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+        <div class="main_title">
+            <h3 class="title">Title</h3>
+        </div>
+        <div class="sub_title">
+            <h4 class="title">sub_title</h4>
+        </div>
+        
+        <div class="sub_title clearfix">
+            <h4 class="title fl">서브 타이틀</h4>
+            <!-- btn -->
+            <div class="btnWrap fr"> 
+              <button type="button" class="btn-xlsdown"><span>엑셀다운로드</span></button>
+              <button type="button" class="btn-upload"><span>엑셀업로드</span></button>
+              <a href="#" class="blue_btn dpn">블루버튼</a>
+              <button type="button" class="blue_btn"><span>집계마스터 초기화</span></button>
+              
+            </div>
+            <!-- btn//--> 
+          </div> 
+    </div>
+    
+   
+  </div>
+  <!-- content01//--> 
+
+
+</body>
+</html>

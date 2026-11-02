@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">사업비배부기준</h3>
+      </div>
+      
+      <!-- searchform 0202 css 추가 -->
+      <div class="search-form-wrap-d">
+        <div class="search-item">
+          <!--1row-->
+          <div class="search-item-inner">      
+            <div class="item">
+              <p class="title">마감년월 <span class="point">*</span></p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">배부유형 <span class="point">*</span></p>
+              <div>
+                <select class="wi100">
+                  <option>채널별</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">사업비배부기초코드</p>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+              </div>
+            </div>
+            
+          </div>
+          <!--//1row-->
+          <!--2row-->
+           <div class="search-item-inner" style="">
+            <div class="item">
+              <p class="title">마감년월 <span class="point">*</span></p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+              </div>
+            <div class="item">
+              <p class="title">배부유형 <span class="point">*</span></p>
+              <div>
+                <select class="wi100">
+                  <option>채널별</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">사업비배부기초코드</p>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+              </div>
+            </div>
+          </div>
+          <!--//2row-->
+          <!--3row-->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">마감년월 <span class="point">*</span></p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+              </div>
+            <div class="item">
+              <p class="title">배부유형 <span class="point">*</span></p>
+              <div>
+                <select class="wi100">
+                  <option>채널별</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">사업비배부기초코드</p>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+              </div>
+            </div>
+          </div>
+          <!--//row-->
+        </div>
+        <div class="search-item-btn"> 
+          <!--row 갯수가 1줄일경우  class="" 2줄일 경우 class="p2",  갯수가 3줄일 경우  class="p3"  -->
+          <a href="javascript:void(0);" class="p3"><i class="xi-search xi-x"></i> 조회</a> 
+        </div>
+        </div>
+        
+      </div>
+       <!-- //searchform 0202 css 추가 -->
+  
+    <!-- btn -->
+    <div class="btnWrap txtar">
+      <button type="button" class="btn-xlsdown"><span>엑셀다운로드</span></button>
+    </div>
+    <!-- btn//--> 
+    <!-- 채너별 table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>기초코드</th>
+            <th>기초코드 명</th>
+            <th>AA</th>
+            <th>BS </th>
+            <th>CA</th>
+            <th>CC</th>
+            <th>CM</th>
+            <th>DM </th>
+            <th>GA</th>
+            <th>GB</th>
+            <th>PA</th>
+            <th>합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>001</td>
+            <td>보유계약건수(주계약)</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="fwb txtar">999,999</td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!--채널별 table//-->
+
+    <!-- PF별 table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>기초코드</th>
+            <th>기초코드 명</th>
+            <th>PF1</th>
+            <th>PF2 </th>
+            <th>PF3</th>
+            <th>PF4</th>
+            <th>PF5</th>
+            <th>PF6</th>
+            <th>PF7</th>
+            <th>PF8</th>
+            <th>PF9</th>
+            <th>합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>001</td>
+            <td>보유계약건수(주계약)</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="fwb txtar">999,999</td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!-- PF별 table //-->
+
+    <!-- 계약그룹 table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>기초코드</th>
+            <th>기초코드 명</th>
+            <th>계약그룹ID</th>
+            <th>기초값</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>001</td>
+            <td>보유계약건수(주계약)</td>
+            <td></td>
+            <td></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!-- 계약그룹 table// -->
+
+    <!-- 증번별 table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>기초코드</th>
+            <th>기초코드 명</th>
+            <th>증번별 합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>001</td>
+            <td>보유계약건수(주계약)</td>
+            <td class="fwb txtar"></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!-- 증번별 table //-->
+
+    <!-- 주특별 table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>기초코드</th>
+            <th>기초코드 명</th>
+            <th>주번별 합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>001</td>
+            <td>보유계약건수(주계약)</td>
+            <td class="fwb txtar"></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <!-- 주특별 table // -->
+    
+  </div>
+  <!-- content01//--> 
+  <!-- Content //--> 
+
+</body>
+</html>

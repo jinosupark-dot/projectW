@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.HistoryMapper">
+
+	<!-- TB_IMGSYL05 (사용자화면접근이력) INSERT -->
+	<insert id="insertHistory" parameterType="map">
+		<![CDATA[
+		INSERT /*HistoryMapper.insertHistory 사용자화면접근이력 INSERT */
+		INTO S_MG.TB_IMGSYL05
+		( 
+			LOIN_IP_ADDR
+			,USER_ID
+			,CONCT_DTM
+			,USER_NM
+			,ORG_NM
+			,MENU_ID
+			,REGNT_ENO
+			,REG_DTM
+			,TRTR_ENO
+			,TRT_DTM   
+		)
+		VALUES
+		( 
+			#{loinIpAddr}
+			,#{userId}
+			,CURRENT_TIMESTAMP
+			,#{userNm}
+			,#{orgNm}
+			,#{menuId}
+			,#{regntEno}
+			,CURRENT_TIMESTAMP
+			,#{trtrEno}
+			,CURRENT_TIMESTAMP
+		)
+		]]>
+	</insert>
+</mapper>

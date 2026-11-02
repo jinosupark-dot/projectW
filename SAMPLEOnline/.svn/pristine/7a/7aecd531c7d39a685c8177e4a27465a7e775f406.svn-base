@@ -1,0 +1,319 @@
+@charset "utf-8";
+/* basic CSS */
+@font-face {
+	font-family: 'NanumBarunGothic';
+	src: url('../font/NanumBarunGothic.eot');
+	src: url('../font/NanumBarunGothic.eot') format('embedded-opentype'), url('../font/NanumBarunGothic.woff') format('woff');
+}
+/* Reset 시작 */
+html {height:100%;}
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+fieldset {border:none;}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+* {
+	box-sizing: border-box;
+	font-family: 'NanumBarunGothic', dotum, '돋움', 'MalgunGothicWeb', '맑은고딕', sans-serif;
+}
+body {
+	line-height: 1;
+	margin: 0;
+	width:100%;
+	font-size: 13px;
+	color: #555;
+	height: 100%;
+	overflow:hidden;
+}
+ol, ul, li {
+	list-style: none;
+	padding: 0;
+	margin: 0
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* Reset 끝 */
+
+
+/* a 태그 */
+a {
+	color: #666;
+	text-decoration: none;
+}
+/* a:hover 이벤트 태그 */
+a:hover {
+	text-decoration: none;
+}
+/* a:active, a:focus 이벤트 태그 : 이벤트시 투명 점선 테투리 없앰 */
+a:active, a:focus {
+	outline: none;
+ ie-dummy:expression(this.hideFocus=true);
+}
+/* input 태그 : 버튼 */
+input[type=button], input[type=submit], button {
+	cursor: pointer;
+	border: 0;
+}
+/* input 태그 : 입력 박스 */
+input[type="text"], input[type="password"], input[type="number"] {
+	padding: 0 5px;
+	height: 21px;
+	font-size: 13px;
+	line-height: 21px;
+	border: 1px solid #b8b8b8;
+	vertical-align: middle;
+	color:#3b4263;
+}
+/* input 태그 : 입력 박스 : 읽기 전용 */
+input[readonly] {
+	background-color: #e4dfdb;
+	color:#625951;
+}
+
+input[disabled] {
+	background-color: #d5d5d5;
+	color:#848484;
+}
+
+input[type="text"]:focus {
+	border: 1px solid #b8b8b8;
+	background-color:#e5eff9;
+	color:#3b4263;
+}
+input[readonly]:focus, input[disabled]:focus {
+	border: 1px solid #b8b8b8;
+	background-color: #e4dfdb;
+	color:#b8b8b8;
+}
+input[type="check"], input[type="checkbox"], input[type="radio"] {
+	vertical-align: middle;
+	margin: 0px 3px 0 0;
+}
+
+label {
+	top: 1px;
+	position: relative;
+	display: inline-block;
+}
+
+/*2021-04-08 input box 화살표제거*/
+input::-webkit-calendar-picker-indicator{
+	display:none;
+}
+/* CSS Document */
+input:focus {
+	outline: none;
+}
+*:focus {
+	outline: none;
+}
+input::placeholder {
+ color:#9d9ea7;
+}
+input::-webkit-input-placeholder {
+ color:#9d9ea7;
+}
+/* select 태그 */
+select {padding: 0 0 0 5px !important;/*그리드  select box 크기가 jsgrid.css.min 우선 적용하여, important 우선순위로 지정함*/
+    height: 21px;
+    font-size: 13px;
+    line-height: 21px;
+    border: 1px solid #b8b8b8;
+    vertical-align: middle;
+    -moz-apperance:none;
+    webkit-apperance:none;
+    apperance:none
+    }
+/* select 태그 : 리스트 박스 */
+select[multiple] {
+	height: 84px;
+	line-height: 1;
+	padding-left: 0px;
+}
+/* select 태그 : 읽기 전용 */
+select[disabled] {
+	background-color: #d5d5d5;
+	color:#848484;
+}
+
+select:focus{
+	border: 1px solid #b8b8b8;
+	background-color:#e5eff9;
+	color:#3b4263;
+}
+/* textarea 태그 */
+textarea[readonly]{
+	background-color: #e4dfdb;
+	color:#625951;
+}
+
+textarea[disabled] {
+	background-color: #d5d5d5;
+	color:#848484;
+}
+
+
+textarea {
+	width: 100%;
+	font-size: 13px;
+	color: #636363;
+	border: 1px solid #b3b3b3;
+	box-sizing: border-box;
+}
+.blind {
+	background: none repeat scroll 0 center rgba(0, 0, 0, 0);
+	border: 0 none;
+	display: none;
+	font-size: 0;
+	height: 0;
+	overflow: hidden;
+	width: 0;
+}
+.required {
+	border: 1px solid #76aedf !important;
+}
+.clearfix {
+*zoom:1;
+}
+.clearfix:after {
+	clear: both;
+	content: "";
+	display: block;
+}
+/* Align */
+.tl {
+	text-align: left !important
+}
+.tc {
+	text-align: center !important
+}
+.tr {
+	text-align: right !important
+}
+.txtal {
+	text-align: left !important
+}
+.txtar {
+	text-align: right !important
+}
+.fcb {
+	color: blue !important
+}
+.fcr {
+	color: red !important
+}
+.fl {
+	float: left !important
+}
+.fn {
+	float: none !important
+}
+.fr {
+	float: right !important
+}
+/* Space */
+.mr5 {
+	margin-right: 5px !important
+}
+.mt0 {
+	margin-top: 0px !important
+}
+.mt3 {
+	margin-top: 3px !important
+}
+.mt5 {
+	margin-top: 5px !important
+}
+.mt10 {
+	margin-top: 10px !important
+}
+.mt20 {
+	margin-top: 20px !important
+}
+
+.mt30 {
+	margin-top: 30px !important
+}
+
+.mt40 {
+	margin-top: 40px !important
+}
+
+.mt50 {
+	margin-top: 50px !important
+}
+
+.mtb10 {
+	margin: 10px 0!important
+}
+/*width*/
+.wi100 {
+	width: 100%;
+}
+.wi120px {
+	width: 120px !important;
+}
+.wi130px {
+	width: 130px !important;
+}
+.wi140px {
+	width: 140px !important;
+}
+.wi150px {
+	width: 150px !important;
+}
+.wi160px {
+	width: 160px !important;
+}
+.wi170px {
+	width: 170px !important;
+}
+.wi180px {
+	width: 180px !important;
+}
+.wi190px {
+	width: 190px !important;
+}
+
+.wi200px {
+	width: 200px !important;
+}
+.wi265px {
+	width: 265px !important;
+}
+.wi280px {
+	width: 280px !important;
+}
+
+.wi290px {
+	width: 290px !important;
+}
+.wi360px{
+	width:360px !important
+}
+/*line-height*/
+.line-height20 {line-height:20px;}
+
+/*color*/
+.point{color:#ee2d23}
+/*display:none*/
+.dpn{display: none;}
+.dpb{display: block;}
+
+/*font-weight*/
+.fwb{font-weight: bold;}
+.fwn{font-weight: normal;}

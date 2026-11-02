@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!--- Section -->
+ <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="main_title clearfix">
+      <h3 class="title">결산프로세스 Activity</h3>
+    </div>
+    <div class="inner clearfix"> 
+      <!-- tree_menu -->
+      <div class="tree_menu_area">
+        <h4 class="title">Activity 목록</h4>
+        <div class="tree_menu">
+          <div class="tree_wrap">
+            <p class="tree_main"><i class="xi-home xi-x"></i> IFRS17</p>
+            <ul>
+              <li>
+                <p class="tree_dep1"><a href="#none">결산모니터링</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">Audit Trail</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">공통</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1 notree"><a href="#none">결산모니터링</a></p>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">계리결산</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">사업비배부</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">재무결산</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1"><a href="#none">관리</a></p>
+                <ul class="tree_dep2">
+                  <li>
+                    <p class="tree_dep1_1"><a href="#none">결산모니터링</a></p>
+                    <ul class="tree_dep2_1">
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                      <li><a href="#">결산모닡터링 조회</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="tree_dep1 notree"><a href="#none">단순상담</a></p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+     
+      <!-- tree_menu // --> 
+      <!--grid table -->
+      <div class="tree_gridtable_area">
+        <div class="main_title clearfix">
+          <h4 class="title fl">Activity정보</h4>
+          <div class="txtar">
+            <button class="btn-save"><span>저장</span></button>
+          </div>
+        </div>
+        <!-- table -->
+        <div class="tableWrap">
+          <table class="tableA">
+              <thead>
+                <tr>
+                  <th>순번</th>
+                  <th>유형</th>
+                  <th>Activity명</th>
+                  <th>등록일시</th>
+                  <th>변경일시</th>
+                  <th>상태</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>상분류</td>
+                  <td>결산준비</td> 
+                  <td class="tc">2021-02-16</td>
+                  <td class="tc">2021-02-16</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+      <!--table --> 
+      <p class="tree_control_btn"> 
+        <div class="txtar">
+          <a href="#"><img src="img/tree_munu_up.png" alt="up"></a> 
+          <a href="#"><img src="img/tree_menu_down.png" alt="down"></a> 
+          <button class="btn-grid-add"><span>행추가</span></button>
+        </div>
+      </p>
+
+    </div>
+  </div>
+  <!-- content01//--> 
+  <!-- Content //--> 
+
+<script type="text/javascript">
+var sprycheckbox1 = new Spry.Widget.ValidationCheckbox("sprycheckbox1");
+</script>
+<script type="text/javascript">
+    $(".tabs > li > a").click(function() {
+
+        $(".tab_content").hide(); 
+        $(".tabs li:first").addClass("active").show(); 
+        $(".tab_content:first").show(); 
+
+
+        $(".tabs li").click(function() {
+          $(".tabs li").removeClass("active"); 
+          $(this).addClass("active"); 
+          $(".tab_content").hide(); 
+          var activeTab = $(this).find("a").attr("href"); 
+          $(activeTab).fadeIn(); 
+          return false;
+        });
+
+      });
+</script>
+
+
+
+</body>
+</html>

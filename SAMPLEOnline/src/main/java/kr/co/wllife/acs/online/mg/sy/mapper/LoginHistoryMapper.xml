@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.LoginHistoryMapper">
+
+	<!-- TB_IMGSYL01(로그인이력) 테이블 SQL -->
+	<select id="selectList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		SELECT /* Login_history.selectList 로그인이력 조회  */
+			USER_ID										/* 사용자ID */
+			,TO_CHAR(LOIN_DTM, 'YYYYMMDD') AS LOIN_DTM	/* 로그인일시 */
+			,CONCT_SC_CD								/* 접속구분코드 */
+			,REGNT_ENO									/* 등록자사번 */
+			,TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM	/* 등록일시 */
+			,TRTR_ENO									/* 처리자사번 */
+			,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM	/* 처리일시 */
+		FROM S_MG.TB_IMGSYL01	/* 로그인 이력 */
+		ORDER BY REG_DTM DESC
+		]]>
+	</select>
+
+	<insert id="insertHistory" parameterType="map">
+		<![CDATA[
+		INSERT /* Login_history.insertHistory 로그인이력 저장  */
+		INTO S_MG.TB_IMGSYL01	/* 로그인 이력 */
+			( 
+				USER_ID			/* 사용자ID */
+				,LOIN_DTM		/* 로그인일시 */
+				,CONCT_SC_CD	/* 접속구분코드 */
+				,REGNT_ENO		/* 등록자사번 */
+				,REG_DTM		/* 등록일시 */
+				,TRTR_ENO		/* 처리자사번 */
+				,TRT_DTM		/* 처리일시 */
+			)
+		VALUES
+		( 
+			#{userId}
+			,CURRENT_TIMESTAMP
+			,#{conctScCd}
+			,#{regntEno}
+			,CURRENT_TIMESTAMP
+			,#{trtrEno}
+			,CURRENT_TIMESTAMP
+		)
+		]]>
+	</insert>
+</mapper>

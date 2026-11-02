@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!--SqlSessionFactoryBean가 sqlsessio 이름의 Bean으로 등록되어 있음  -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="DS-IFRS17-01" />
+		<property name="configLocation" value="classpath:/egovframework/sqlmap/mappers/sql-mapper-config.xml" />
+		<property name="mapperLocations" value="classpath*:egovframework/sqlmap/mappers/ifrs17/**/*.xml" />
+	</bean>
+
+	<!-- @Mapper를 사용하여 SQL문 호출 가능 -->
+	<!-- MapperConfigurer setup for MyBatis Database Layer with @Mapper("deptMapper") in DeptMapper Interface -->
+	<bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+		<property name="basePackage" value="kr.co.abl" />
+	</bean>
+    
+</beans>

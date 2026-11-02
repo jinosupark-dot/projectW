@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.NoticeMapper">
+
+	<!--TB_IMGSYF07 (공지사항기본) 공지사항 상세조회-->
+	<select id="selectNoticeListByInfo" parameterType="map" resultType="FwkMap">
+		<![CDATA[		
+		SELECT		/*NoticeMapper.selectNoticeListByInfo  공지사항 상세조회 */
+			 ROW_NUMBER() OVER(ORDER BY ANUC_STR_YMD DESC ,AVL_PRD DESC , ANUC_TITL ASC) AS ROW_NUM
+			,SNO																/*일련번호*/
+			,ANUC_STR_YMD														/*공지시작일자*/
+			,ANUC_END_YMD														/*공지종료일자*/
+			,AVL_PRD  															/*유효기간*/
+			,ANUC_TITL															/*공지제목*/
+			,ANUC_CNTNT															/*공지내용*/
+			,USER_NM   															/*사용자명*/
+			,ORG_NO																/*조직번호*/
+			,ORG_NM																/*조직명*/
+			,REGNT_ENO															/*등록자사번*/
+			,TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM							/*등록일시*/
+			,TRTR_ENO 															/*처리자사번*/
+			,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM							/*처리일시*/
+		FROM S_MG.TB_IMGSYF07	/* 공지사항기본 */
+		WHERE 1 = 1
+		  AND USER_NM LIKE '%'||#{userNm}||'%'
+		  AND ORG_NM LIKE '%'||#{orgNm}||'%'
+		 ]]>
+		<if test='anucStrYmd != "" and anucStrYmd2 != NULL'>
+			<![CDATA[
+			   AND ANUC_STR_YMD BETWEEN #{anucStrYmd}
+			   						AND #{anucStrYmd2}
+			]]>
+		</if>
+		<if test='ignoreAnucEndYmd == "Y"'>
+			<![CDATA[
+			   AND ANUC_END_YMD >= TO_CHAR(systimestamp, 'YYYYMMDD')		   						
+			]]>
+		</if>
+	</select>
+	
+	<!--TB_IMGSYF07 (공지사항기본) 공지사항 조회-->
+	<select id="selectNoticeList" parameterType="map" resultType="FwkMap">
+		<![CDATA[
+		   SELECT		/*NoticeMapper.selectNoticeListByInfo  공지사항 상세조회 */
+			 ROW_NUMBER() OVER(ORDER BY ANUC_STR_YMD DESC ,AVL_PRD DESC , ANUC_TITL ASC) AS ROW_NUM
+			,SNO                                      							/*일련번호*/      
+			,ANUC_STR_YMD                             							/*공지시작일자*/    
+			,ANUC_END_YMD                             							/*공지종료일자*/    
+			,AVL_PRD                                  							/*유효기간*/      
+			,ANUC_TITL                                							/*공지제목*/      
+			,ANUC_CNTNT                               							/*공지내용*/      
+			,USER_NM                                  							/*사용자명*/      
+			,ORG_NO                                   							/*조직번호*/      
+			,ORG_NM                                   							/*조직명*/       
+			,REGNT_ENO                                							/*등록자사번*/     
+			,TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM  							/*등록일시*/      
+			,TRTR_ENO                                 							/*처리자사번*/     
+			,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM  							/*처리일시*/      
+		FROM S_MG.TB_IMGSYF07	/* 공지사항기본 */
+		]]>
+	</select>
+	
+	<!-- TB_IMGSYF07 (공지사항기본) 공지사항 추가-->
+	<insert id="insertNotice" parameterType="map">
+		<![CDATA[
+		INSERT /*NoticeMapper.selectNoticeListByInfo  공지사항 상세조회 */
+		INTO S_MG.TB_IMGSYF07	/* 공지사항기본 */
+		( 
+		SNO                                     							/*일련번호*/      
+		,ANUC_STR_YMD                           							/*공지시작일자*/    
+		,ANUC_END_YMD                           							/*공지종료일자*/    
+		,AVL_PRD                                							/*유효기간*/      
+		,ANUC_TITL                              							/*공지제목*/      
+		,ANUC_CNTNT                             							/*공지내용*/      
+		,USER_NM                                							/*사용자명*/      
+		,ORG_NO                                 							/*조직번호*/      
+		,ORG_NM                                 							/*조직명*/       
+		,REGNT_ENO                              							/*등록자사번*/     
+		,REG_DTM                                							/*등록일시*/      
+		,TRTR_ENO                               							/*처리자사번*/     
+		,TRT_DTM )                              							/*처리일시*/      
+		VALUES
+		( 
+		S_MG.SEQ_TB_IMGSYF07.NEXTVAL,
+		#{anucStrYmd} ,
+		#{anucEndYmd} ,
+		#{avlPrd} ,
+		#{anucTitl} ,
+		#{anucCntnt} ,
+		#{userNm} ,
+		#{orgNo} ,
+		#{orgNm} ,
+		#{regntEno} ,
+		CURRENT_TIMESTAMP ,
+		#{trtrEno} ,
+		CURRENT_TIMESTAMP )
+		]]>
+	</insert>
+	
+	  <!-- TB_IMGSYF07 (공지사항기본) 공지사항 수정-->
+	<update id="updateNotice" parameterType="map">
+		<![CDATA[
+		UPDATE /*NoticeMapper.selectNoticeListByInfo  공지사항 상세조회 */
+		S_MG.TB_IMGSYF07	/* 공지사항기본 */
+		SET 
+			AVL_PRD = #{avlPrd} ,							/*유효기간*/
+			ANUC_STR_YMD = #{anucStrYmd} ,                  /*공지시작일자*/
+			ANUC_END_YMD = #{anucEndYmd} ,                  /*공지종료일자*/
+			ANUC_TITL = #{anucTitl} ,                       /*공지제목*/
+			ANUC_CNTNT = #{anucCntnt} ,                     /*공지내용*/
+			TRTR_ENO = #{trtrEno} ,                         /*처리자사번*/
+			TRT_DTM = CURRENT_TIMESTAMP                     /*처리일시*/		
+		WHERE SNO= #{sno}                                   /*일련번호*/    
+		]]>
+	</update>
+
+ 	 <!-- TB_IMGSYF07 (공지사항기본) 공지사항 삭제-->
+	<delete id="deleteNotice" parameterType="map">
+		<![CDATA[
+		DELETE /*NoticeMapper.selectNoticeListByInfo  공지사항 상세조회 */
+		FROM S_MG.TB_IMGSYF07	/* 공지사항기본 */		
+		WHERE SNO= #{sno}	                    /*일련번호*/    
+		]]>
+	</delete>
+</mapper>

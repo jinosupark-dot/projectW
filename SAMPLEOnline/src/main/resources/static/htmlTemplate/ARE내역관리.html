@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+ <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">ARE내역관리</h3>
+      </div>
+      <!-- searchform -->
+      <div class="search-form-wrap-d">
+        <div class="search-item">
+       	  <!-- 1row -->
+          <div class="search-item-inner">
+            <div class="item" >
+              <p class="title">일자구분 <span class="point">*<span></p>              
+                <div class="cal-group">
+                  <input type="text"  class="cal-input" style="width: 80px;">
+                  <button class="cal"><img src="../img/icon_cal.png"></button>
+                </div> 
+                <span class="text">~</span>
+                <div class="cal-group">
+                  <input type="text"  class="cal-input" style="width: 80px;">
+                  <button class="cal"><img src="../img/icon_cal.png"></button>
+                </div>              
+            </div>
+           <div class="item">
+              <p class="title">발의부서</p>
+              <div class="">
+                <input type="text">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">처리자</p>
+              <div>
+                <input type="text">
+              </div>
+            </div>            
+          </div>
+          <!-- 1row -->
+          <!-- 2row -->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">회계코드</p>
+              <select>
+                <option>1.GM</option>
+              </select><div class="cal-group">
+                  <input type="text"  class="cal-input" style="width: 80px;">
+                  <button class="cal"><img src="../img/icon_cal.png"></button>
+                </div>
+            </div>
+           <div class="item">
+              <p class="title">업무분류</p>
+              <select class="">
+                <option>20.I4 출재조정</option>
+              </select>
+            </div>
+           <div class="item">
+              <p class="title">거래유형</p>
+              <div>
+                <select>
+                  <option>4011:잔여보장BEL현금흐름</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">금액구분</p>
+              <div>
+                <select>
+                  <option>3072121:기초_보험계약부채_잔여(BE(L))_손실(회수)요소_자산대체</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+          <!-- 2row -->  
+          <!--3row-->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">금액유형</p>
+              <div>
+                <select>
+                  <option>10.N1 원장 계정구분코드</option>
+                </select>
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">금액유형상세</p>
+              <div>
+                <select>
+                  <option>788126205:기업대출수수료-등기부등본열람비용-유효이자율비적용</option>
+                </select>
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">상태</p>
+              <div>
+                <input type="text" value="10202103030000000001">
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">취소</p>
+              <div>
+                <select>
+                  <option>01.비례수당</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!--3row-->
+          <!--4row-->
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">집계명세 ID</p>
+              <div>
+                 <input type="text" value="10202103030000000001">
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">경리전표 ID</p>
+              <div>
+                <input type="text" value="10202103030000000001">
+              </div>
+            </div>
+           <div class="item">
+              <p class="title">회계전표ID</p>
+              <div>
+                <input type="text" value="10202103030000000001">
+              </div>
+            </div>
+          </div>
+          <!--4row--> 
+
+
+        </div>
+        <div class="search-item-btn"> 
+        	<!--row 갯수가 1줄 일경우  class="", row 갯수가 2줄일 경우 class="p2", rows 갯수가 3줄일 경우 class="p3"  -->
+        	<a href="javascript:void(0);" class="p4"><i class="xi-search xi-x"></i> 조회</a> 
+        </div>
+      </div>
+      <!-- searchform 상세  -->
+    </div>
+    
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>회계코드</th>
+            <th>회계코드명</th>
+            <th>업무분류</th>
+            <th>업무분류명</th>
+            <th>거래유형</th>
+            <th>거래유형명</th>
+            <th>금액구분</th>
+            <th>금액구분명</th>
+            <th>금액유형</th>
+            <th>금액유형명</th>
+            <th>금액유형상세</th>
+            <th>금액유형상세명</th>
+            <th>발의일자</th>
+            <th>집계명세ID</th>
+            <th>경리전표ID</th>
+            <th>회계전표ID</th>
+            <th>계약집합ID</th>
+            <th>포트폴리오구분</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          	<td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tc">2020-01-01</td>
+            <td class=""><a href="#">10202103030000000001</a></td>
+            <td class=""><a href="#">10202103030000000001</a></td>
+            <td></td>
+             <td></td>
+            <td></td>
+            <td></td>
+          </tr>                   
+        </tbody>
+      </table>
+    </div>
+   <!-- table // --> 
+   
+    <div class="clearfix mt50">
+      <div class="fr">
+        <span class="text">비밀번호</span>
+        <input type="text" class="wi180px" style="height:27px">
+        <button class="brown_btn"><span>재처리(전송)</span></button>
+      </div>
+    </div>
+  </div>
+  <!-- Content //--> 
+</body>
+</html>

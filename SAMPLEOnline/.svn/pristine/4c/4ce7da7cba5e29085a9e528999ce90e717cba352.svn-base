@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">사업비 배부내역 검증</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">
+            <div class="item">
+              <p class="title">마감년월</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>
+            
+            <div class="item">
+              <p class="title">게시자</p>
+              <div>
+                <select>
+                  <option>채널별</option>
+                </select>
+              </div>
+            </div>ㄷ
+            <div class="">
+              <button class="brown_btn_s"><span>총괄조회</span></button>
+              <button class="brown_btn_s"><span>검증실행</span></button>
+            </div>
+            
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- 총괄조회 -->
+    <h3 class="title">총괄조회</h3>
+    <div class="tableWrap">
+      <table class="tableA">
+      
+        <thead>
+          <tr>
+            <th>마감년월</th>
+            <th>사업비기초</th>
+            <th>채너별</th>
+            <th>PF별</th>
+            <th>계약그룹별</th>
+            <th>증번(계정그룹)별</th>
+            <th>증번(FSS)별</th>
+            <th>주특별</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tc">2019-01</td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,497,000</td>
+            <td class="tr">11,500,200</td>
+            <td class="tr">11,494,679</td>
+            <td class="tr">11,498,797</td>
+            <td class="tr">11,500,124</td>
+            <td class="tr">11,499,988</td>
+          </tr>
+          <tr class="total">
+            <td colspan="2" class="tc">배부차액</td>
+            <td class="tr">3,000</td>
+            <td class="tr">3,000</td>
+            <td class="tr">3,000</td>
+            <td class="tr">3,000</td>
+            <td class="tr">3,000</td>
+            <td class="tr">3,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+   
+    <!-- 총괄조회//--> 
+
+    <!-- btn -->
+    <div class="btnWrap clearfix">
+      <h3 class="title fl">오류내역</h3>
+      <div class="fr">
+        <button class="btn-download"><span>엑셀다운로드</span></button>
+      </div>
+    </div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>선택</th>
+            <th>마감년월</th>
+            <th>계정번호</th>
+            <th>코스트센터 </th>
+            <th>사업비배부 채널</th>
+            <th>계정그룹</th>
+            <th>사업비항목</th>
+            <th>영업채널</th>
+            <th>포트폴리오구분</th>
+            <th>계약집합 ID</th>
+            <th>금감원분류</th>
+            <th>계약번호</th>
+            <th>보험ID</th>
+            <th>대상사업비</th>
+            <th>배분사업비계</th>
+            <th>차액</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>
+          <tr>          	
+            <td class="tc"><input type="checkbox"></td>
+            <td class="tc">2019-01</td>
+            <td class="tc">111111111</td>
+            <td class="tc">111111111</td>
+            <td class="tc">CHI_AD</td>
+            <td class="tc">SPAG0001</td>
+            <td class="tc">05</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="tr">11,500,000</td>
+            <td class="tr">11,498,000</td>
+            <td class="tr">2,000</td>
+          </tr>    
+        </tbody>
+      </table>
+    </div>
+    <!-- table // --> 
+    
+  </div>
+  <!-- content01//--> 
+</body>
+</html>

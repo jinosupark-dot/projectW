@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+ <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">Audit Trail - 잔액명세 마스터</h3>
+      </div>
+      
+      <div class="btnWrap txtar">
+        <button type="button" class="btn-xlsdown"><span>엑셀다운로드</span></button>
+        <button type="button" class="btn-upload"><span>엑셀업로드</span></button>
+      </div>
+      <!-- table -->      
+      <div class="tableWrap ">
+        <table class="tableA">
+          <thead>            
+            <tr>
+              <th>재무제표항목/계정과목코드</th>
+              <th>Level1</th>
+              <th>Level2</th>
+              <th>Level3</th>
+              <th>Level4</th>
+              <th>CoA</th>
+              <th>계산식</th>
+              <th>상위항목</th>
+            </tr>
+          </thead>
+          <tbody>            
+            <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl">f17A201000000</span>
+                  <span class="fr"></span>
+                </div>
+              </td>
+              <td class="tr" colspan="5" rowspan="3"></td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>            
+            </tr>  
+            <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl">f17A201000000</span>
+                  <span class="fr"></span>
+                </div>
+              </td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>            
+            </tr>  
+            <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl">f17A201000000</span>
+                  <span class="fr"></span>
+                </div>
+              </td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>            
+            </tr>                     
+          </tbody>
+        </table>
+      </div>
+    <!-- table // --> 
+   
+    
+  </div>
+  <!-- Content //--> 
+  </div>
+</body>
+</html>

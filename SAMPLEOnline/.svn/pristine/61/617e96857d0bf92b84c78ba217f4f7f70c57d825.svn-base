@@ -1,0 +1,176 @@
+package egovframework.com.cmm.util;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+/**
+ * 
+ * @시스템명: ifrs17
+ * @업무명: 공통
+ * @설명: Request Scope을 이용하여 데이터 처리 Util
+ * @최초작성자: 장창환
+ * @최초작성일: 2021. 1. 8.
+ * @최종변경일: 2021. 1. 8.
+ * @개정이력: 
+ *  장창환 2021. 1. 8. 최초작성
+ */
+public class RequestScopeUtil {
+	
+	private static final Logger logger = LoggerFactory.getLogger(RequestScopeUtil.class);
+	
+	public static final String KEY_CLIENT_IP = "client_ip";
+	public static final String KEY_CLIENT_HOST = "client_host";
+	
+	/**
+	 * 
+	 * @설명: Request Scope에 String Attribute 조회
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static String getAttribute(String key) {
+		return (String)RequestContextHolder.getRequestAttributes().getAttribute(key, RequestAttributes.SCOPE_REQUEST);
+	}
+
+	/**
+	 * 
+	 * @설명: Request Scope에 Object Attribute 조회
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static Object getObject(String key) {
+		return (Object)RequestContextHolder.getRequestAttributes().getAttribute(key, RequestAttributes.SCOPE_REQUEST);
+	}
+
+	/**
+	 * 
+	 * @설명: Request Scope에 Object Attribute 셋팅
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static void setAttribute(String key, Object attribute) {
+		RequestContextHolder.getRequestAttributes().setAttribute(key, attribute, RequestAttributes.SCOPE_REQUEST);
+	}
+	
+	/**
+	 * 
+	 * @설명: Request Scope에 Attribute 삭제
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static void removeAttribute(String key) {
+		RequestContextHolder.getRequestAttributes().removeAttribute(key, RequestAttributes.SCOPE_REQUEST);;
+	}
+
+	/**
+	 * 
+	 * @설명: Request Parameter 정보 조회
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static String getClientRequestParam() {
+		String requestParams = "";
+		try {
+			HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+			String contentType = req.getContentType();
+			if(contentType == null) contentType = "";
+			if(logger.isDebugEnabled()) {
+				logger.debug("===========Request Header Info=============");
+				Enumeration<String> em = req.getHeaderNames();
+				while(em.hasMoreElements()) {
+					String key = em.nextElement();
+					String value = req.getHeader(key);
+					if(value == null) { 
+						value = "";
+					} else {
+						value = JSONUtil.decodeJSONString(value);
+					}
+					logger.debug(key + ":[" + value + "]");
+				}
+				logger.debug("===========================================");
+			}
+			logger.error("contentType:" + contentType);
+			if(contentType.toLowerCase().indexOf("/x-www-form-urlencoded") > 0) {
+				Map<String, String> requestParamMap = new HashMap();
+				Enumeration<String> em = req.getParameterNames();
+				while(em.hasMoreElements()) {
+					String key = em.nextElement();
+					String value = req.getParameter(key);
+					if(value == null) { 
+						value = "";
+					} else {
+						value = JSONUtil.decodeJSONString(value);
+					}
+					requestParamMap.put(key, value);
+				}				
+				requestParams = requestParamMap.toString();
+			} else if(contentType.toLowerCase().indexOf("/json") > 0 ){	//application/json
+				requestParams = StreamUtil.getString(req.getInputStream());
+				if(requestParams != null) requestParams = JSONUtil.decodeJSONString(requestParams);
+			} else if(contentType.toLowerCase().indexOf("/xml") > 0 ){	//text/xml
+				if(requestParams != null) requestParams = JSONUtil.decodeJSONString(requestParams);
+			} else {
+				logger.error("Unsupported content type!!");
+			}
+		} catch(Exception e) {
+			logger.error("Exception occurs!!", e);
+		}
+		return requestParams;
+	}
+	
+	/**
+	 * 
+	 * @설명: Request URI 조회
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 1. 8.
+	 * @최종변경일: 
+	 * @매개변수: 
+	 * @반환값: String
+	 * @개정이력: 
+	 *  89001203 2021. 1. 8. 최초작성
+	 */
+	public static String getRequestURI() {
+		String uri = "";
+		try {
+			HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+			uri = req.getRequestURI();			
+		} catch(Exception e) {
+			logger.error("Exception occurs!!", e);
+		}
+		return uri;
+	}		
+}

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">결산프로세스모니터링</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">
+            <div class="item">
+              <p class="title">마감년월</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+              </div>
+            </div>             
+            <div class="item">
+              <p class="title">결산시작일</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div> 
+            <div class="item">
+              <p class="title">담당부서</p>
+              <select>
+                <option>1</option>
+              </select>
+            </div>   
+            
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- 리스트 -->
+    <div class="tableWrap">
+      <table class="tableA">      
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>결산순서</th>
+            <th>결산 Activity</th>
+            <th>진행상태</th>
+            <th>오류여부</th>
+            <th colspan="2">D-day</th>
+            <th>마감시각</th>
+            <th>담당부서</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="3">결산준비</td>
+            <td class="tc">1</td>
+            <td><a href="#">재무회계 기준정보 설정</a></td>
+            <td class="tc"><img src="../img/img_status_01.png"></td>
+            <td class="tc">Y</td>
+            <td class="tc">D-2</td>
+            <td class="tc">2020-02-25</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+            <td class="tc">재무회계부</td>    
+          </tr>
+          <tr>
+            <td class="tc">2</td>
+            <td><a href="#">사업비 기준정보 설정</a></td>
+            <td class="tc"><img src="../img/img_status_02.png"></td>
+            <td class="tc">Y</td>
+            <td class="tc">D-2</td>
+            <td class="tc">2020-02-25</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+            <td class="tc">재무회계부</td>    
+          </tr> 
+          <tr>
+            <td class="tc">3</td>
+            <td><a href="#">사업비 기준정보 설정</a></td>
+            <td class="tc"><img src="../img/img_status_03.png"></td>
+            <td class="tc">Y</td>
+            <td class="tc">D-2</td>
+            <td class="tc">2020-02-25</td>
+            <td class="tc">2020-02-25 15:55:00</td>
+            <td class="tc">재무회계부</td>    
+          </tr>             
+          
+
+        </tbody>
+      </table>
+    </div>   
+    <!-- 리스트//--> 
+    <div class="btnWrap clearfix mt50">
+      <div class="fl">
+        <h3 class="title">결산모니터링 상세</h3>
+      </div>
+      <div class="fr">
+        <button class="brown_btn"><span>일괄수동마감</span></button>
+      </div>
+    </div>  
+ 
+  <div class="tableWrap">
+    <table class="tableA">      
+      <thead>
+        <tr>
+          <th>번호</th>
+          <th>결산상세 Activity</th>
+          <th>진행상태</th>
+          <th>오류여부</th>
+          <th>작업유형</th>
+          <th>마감시각</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tc">1</td>
+          <td>배분기준 기초 정보 적재</td>
+          <td class="tc"><img src="../img/img_status_03.png"></td>
+          <td class="tc">Y</td>
+          <td class="tc">전산마감</td>
+          <td class="tc">2020-02-02 14:23:21</td>          
+          <td class="tc">
+            <button class="grid_inbtn_s"><span>작업수행</span></button>
+            <button class="grid_inbtn_s"><span>작업내역</span></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="tc">2</td>
+          <td>배분기준 기초 정보 적재</td>
+          <td class="tc"><img src="../img/img_status_03.png"></td>
+          <td class="tc">Y</td>
+          <td class="tc">전산마감</td>
+          <td class="tc">2020-02-02 14:23:21</td>          
+          <td class="tc">
+            <button class="grid_inbtn_s"><span>수동마감</span></button>
+            <button class="grid_inbtn_s"><span>마감취소</span></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="tc">3</td>
+          <td>배분기준 기초 정보 적재</td>
+          <td class="tc"><img src="../img/img_status_03.png"></td>
+          <td class="tc">Y</td>
+          <td class="tc">전산마감</td>
+          <td class="tc">2020-02-02 14:23:21</td>          
+          <td class="tc">
+            <button class="grid_inbtn_s"><span>수동마감</span></button>
+            <button class="grid_inbtn_s"><span>마감취소</span></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="tc">4</td>
+          <td>배분기준 기초 정보 적재</td>
+          <td class="tc"><img src="../img/img_status_03.png"></td>
+          <td class="tc">Y</td>
+          <td class="tc">전산마감</td>
+          <td class="tc">2020-02-02 14:23:21</td>          
+          <td class="tc">
+            <button class="grid_inbtn_s"><span>수동마감</span></button>
+            <button class="grid_inbtn_s"><span>마감취소</span></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="tc">5</td>
+          <td>배분기준 기초 정보 적재</td>
+          <td class="tc"><img src="../img/img_status_03.png"></td>
+          <td class="tc">Y</td>
+          <td class="tc">전산마감</td>
+          <td class="tc">2020-02-02 14:23:21</td>          
+          <td class="tc">
+            <button class="grid_inbtn_s"><span>수동마감</span></button>
+            <button class="grid_inbtn_s"><span>마감취소</span></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- content01//--> 
+</body>
+</html>

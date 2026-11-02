@@ -1,0 +1,593 @@
+package fwk.com.cmm.util;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import com.cspi.ems.EaiException;
+import com.cspi.ems.EaiFactory;
+import com.cspi.ems.EaiHeaderBean;
+import com.cspi.ems.EaiHeaderMgr;
+import com.cspi.ems.EaiMessage;
+import com.cspi.ems.EaiProxy;
+import com.cspi.ems.impl.ServerConfig;
+
+/**
+ * 
+ * @시스템명: ifrs17
+ * @업무명: 공통
+ * @설명: IFRS17 MS의  Message 테이블을 읽어들여 Runtime에서 Message에 대한 API를 제공한다.
+ * @최초작성자: 장창환
+ * @최초작성일: 2021. 1. 18.
+ * @최종변경일: 
+ * @개정이력: 
+ *  장창환 2021. 1. 18. 최초작성
+ *  황석현 2021.11. 22. EAI_SYSTEM_IFRS17 IFR -> IFB 변경
+ *  황석현 2021.11. 23. 재배포
+ */
+public class EaiUtil {
+	
+	static Logger logger = LoggerFactory.getLogger(EaiUtil.class);
+	
+	public static final String EAI_SYSTEM_IFRS17 = "IFB";	//IFRS17 시스템 ID
+	public static final String EAI_SYSTEM_SAP = "SAP";	//SAP 시스템 ID
+	
+	/**
+	 * 
+	 * @설명: EAI 기본 헤더정보를 생성하여 반환한다.
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 3. 18.
+	 * @최종변경일: 
+	 * @매개변수:
+	 * @반환값: EaiHeaderBean
+	 * @개정이력: 
+	 *  89001203 2021. 3. 18. 최초작성
+	 */
+	public static EaiHeaderBean getRequestHeaderBean() {
+		EaiHeaderBean headerBean = null;
+		String uuid = UUID.randomUUID().toString();
+		
+		headerBean = new EaiHeaderBean();
+		headerBean.setIfResult(null);
+		headerBean.setIfErrCd(null);
+		headerBean.setIfErrMsg(null);
+		headerBean.setIfTrId(uuid);
+		headerBean.setIfSystemCd(EAI_SYSTEM_IFRS17);	//시스템ID
+		
+		headerBean.setIfHostNm(EAI_SYSTEM_IFRS17);
+		//headerBean.setIfPgmId("COMN_PRDCT_");
+		//headerBean.setIfReqUId("");
+		String requestDateTime = DateUtil.getCurrentDate("yyyyMMddHHmmss");
+		headerBean.setIfReqTime(requestDateTime);
+		headerBean.setIfBizSvcNm("");
+		headerBean.setIfBizMethodNm("");
+		headerBean.setIfBizInVONm("");
+		headerBean.setIfBizResult(null);
+		headerBean.setIfBizErrCd(null);
+		headerBean.setIfBizErrMsg(null);
+		//=========================================================================================================//
+		/*타겟시스템의 로컬PC(개발자)/개발계 로 보낼 경우 ServerInfo.cfg 설정 변경 해야 함 - default:N(개발계) */
+		headerBean.setIfFiller(ServerConfig.getInstance().getTransLocalQueue());
+		//=========================================================================================================//
+		return headerBean;
+	}
+
+	/**
+	 * 
+	 * @설명: EaiMessage를 생성하여 반환한다.
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 3. 18.
+	 * @최종변경일: 
+	 * @매개변수: byte [] requestData : 전문 Body byte
+	 * @반환값: EaiMessage
+	 * @개정이력: 
+	 *  89001203 2021. 3. 18. 최초작성
+	 */
+	public static EaiMessage getRequestMessage(byte [] requestData) {
+		EaiMessage reqMessage = null;
+		reqMessage = EaiFactory.getInstance().newMessage();
+		reqMessage.setData(requestData);
+		reqMessage.setTimeoutSec(30);		// 타임아웃 설정
+    	//sreqMsg.setTimeToLiveSec(20);	// 요청전문 유지시간 설정 (장애로 인해 수신프로세스가 메시지를 처리하지 못한 경우 메지지 삭제 처리)
+		return reqMessage;
+	}
+	
+	/**
+	 * 
+	 * @설명: EAI Message를 전송한다.
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 3. 18.
+	 * @최종변경일: 
+	 * @매개변수: String queueId : EAI queueID
+	 * @매개변소: EaiMessage : 전송할 EAI Message 
+	 * @반환값: EaiHeaderBean
+	 * @개정이력: 
+	 *  89001203 2021. 3. 18. 최초작성
+	 */
+	public static EaiHeaderBean sendData(String queueId, EaiMessage reqEaiMessage) throws Exception {
+		EaiMessage resMessage = null;
+		EaiProxy proxy= null;
+		EaiHeaderBean resBean = null;
+		try {
+			proxy = EaiFactory.getInstance().newProxy();
+			resMessage = proxy.requestReply(queueId, reqEaiMessage);	// queue.cfg의 논리큐명 설정 : [SEND_QUEUE]
+			
+			EaiHeaderMgr reqMgr = EaiFactory.getInstance().newHeaderMgr();
+			String resMessageString = resMessage.getDataString();
+			logger.debug("resMessageString:" + resMessageString);
+			resBean = reqMgr.getHeaderParse(resMessageString);
+    	}catch(EaiException ie){
+    		logger.error("code:"+ie.code + ",  message:" + ie.getMessage());			
+    		throw ie;
+		} catch(Exception e) {
+			logger.error("Exception Occurs!", e);
+			throw e;
+		} finally {
+			
+		}
+		return resBean;
+	}
+	
+	/**
+	 * 
+	 * @설명: EAI를 이용하여 File을 타 시스템으로 전달한다.(File To File
+	 * @최초작성자: 89001203
+	 * @최초작성일: 2021. 3. 18.
+	 * @최종변경일: 
+	 * @매개변수: String userId : 전문 호출자 ID
+	 * @매개변수: String sourceSystemCode : 소스 시스템 코드
+	 * @매개변수: String sourceSystemPath : 전송할 File경로
+	 * @매개변수: String sourceSystemFileName : 전송할 파일명
+	 * @매개변수: String transferredFilesCount : 전송대상 파일 갯수 
+	 * @매개변수: String actionAfterTransfer : 전송후 파일처리 구분
+	 * @매개변수: String sourceSystemFileBackupPath : 전송 후 파일 백업 시 경로
+	 * @매개변수: String targetSystemCode : 타겟 시스템 코드
+	 * @매개변수: String targetSystemCode : 타겟 시스템 파일경로
+	 * @반환값: EaiHeaderBean
+	 * @개정이력: 
+	 *  89001203 2021. 3. 18. 최초작성
+	 */
+	public static EaiHeaderBean sendEaiFile(String userId, String sourceSystemCode, String sourceSystemPath, String sourceSystemFileName, String transferredFilesCount, String actionAfterTransfer, String sourceSystemFileBackupPath, String targetSystemCode, String targetSystemPath) {
+		
+		EaiHeaderBean resBean = null;
+		
+		try {
+			//1. Header부 셋팅
+			EaiHeaderBean header = EaiUtil.getRequestHeaderBean();
+			header.setIfId("IERFF50100");	//경리중계전표정보(배치) IFRS18 -> SAP	FiltToFile
+			header.setIfReqUId(userId);	//호출자
+			
+			//2. Body부 생성
+			StringBuilder body = new StringBuilder();
+			
+			//순서가 보장되어야 하네
+			Map bodyMap = new LinkedHashMap();
+			bodyMap.put("sourceSystemCode", sourceSystemCode);
+			bodyMap.put("sourceSystemPath", sourceSystemPath);
+			bodyMap.put("sourceSystemFileName", sourceSystemFileName);
+			bodyMap.put("transferredFilesCount", transferredFilesCount);
+			bodyMap.put("actionAfterTransfer", actionAfterTransfer);
+			bodyMap.put("targetSystemCode", targetSystemCode);
+			bodyMap.put("targetSystemPath", targetSystemPath);
+			String bodyXml = XMLUtil.mapToDocumentString(bodyMap, "eaiCommonFileVO");
+			System.out.println("bodyXML:[" + bodyXml + "]");
+			header.setBody(bodyXml);
+			
+			//3. Eai RequestMessage 생성
+			EaiHeaderMgr reqMgr = EaiFactory.getInstance().newHeaderMgr();
+			byte[] requestDataByte = reqMgr.getData(header);
+			EaiMessage reqEaiMessage = EaiUtil.getRequestMessage(requestDataByte);
+			
+			System.out.println("reqEaiMessage:" + reqEaiMessage);
+			//4. Eai Send
+			resBean = EaiUtil.sendData("I.EAI.ETC.ALL.FTPDaemon", reqEaiMessage);
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resBean;
+	}
+	
+	/**
+	public static void send50120() {
+		try {
+			//1. Header부 셋팅
+			EaiHeaderBean header = EaiUtil.getRequestHeaderBean();
+			header.setIfId("IERAS50120");	//경리중계전표정보(배치) IFRS18 -> SAP	FiltToFile
+			header.setIfReqUId("");	//호출자
+//			header.setIfPgmId("bloc006m");  //프로그램 ID
+			
+			//2. Body부 생성
+//			StringBuilder body = new StringBuilder();
+//			body.append("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>	");
+//			body.append("<iPSapsSlpSndVO>                                               ");
+//			body.append("    <eSubrc></eSubrc>                                          ");
+//			body.append("    <eMessage></eMessage>                                      ");
+//			body.append("    <eBelnr></eBelnr>                                          ");
+//			body.append("    <iPSapsSlpSndHedrVO>                                       ");
+//			body.append("        <sbadoc>210302929798</sbadoc>                          ");
+//			body.append("        <tcode>FB01</tcode>                                    ");
+//			body.append("        <bpcode>02003</bpcode>                                 ");
+//			body.append("        <sgdocSba></sgdocSba>                                  ");
+//			body.append("        <sgtype>G</sgtype>                                     ");
+//			body.append("        <gjahr>2021</gjahr>                                    ");
+//			body.append("        <monat>03</monat>                                      ");
+//			body.append("        <ldgrp>N1</ldgrp>                                       ");
+//			body.append("        <bukrs>KR11</bukrs>                                    ");
+//			body.append("        <budat>20210316</budat>                                ");
+//			body.append("        <bldat>20210316</bldat>                                ");
+//			body.append("        <blart>X9</blart>                                      ");
+//			body.append("        <waers>KRW</waers>                                     ");
+//			body.append("        <kursf></kursf>                                        ");
+//			body.append("        <revflag></revflag>                                    ");
+//			body.append("        <sbadocR></sbadocR>                                    ");
+//			body.append("        <prcoffice>038400</prcoffice>                          ");
+//			body.append("        <coloffice>038400</coloffice>                          ");
+//			body.append("        <xblnr>0202003</xblnr>                                 ");
+//			body.append("        <bktxt>요금/계속보험료입금</bktxt>                           ");
+//			body.append("        <acgbn1>02</acgbn1>                                    ");
+//			body.append("        <retryn>N</retryn>                                     ");
+//			body.append("    </iPSapsSlpSndHedrVO>                                      ");
+//			body.append("    <listIPSapsSlpSndItmVO>                                    ");
+//			body.append("        <buzei>002</buzei>                                     ");
+//			body.append("        <newbs>50</newbs>                                      ");
+//			body.append("        <shkzg>H</shkzg>                                       ");
+//			body.append("        <hkont>5111004021</hkont>                              ");
+//			body.append("        <kostl>4013049999</kostl>                              ");
+//			body.append("        <prctr></prctr>                                        ");
+//			body.append("        <dmbtr>150000</dmbtr>                                  ");
+//			body.append("        <wrbtr>150000</wrbtr>                                  ");
+//			body.append("        <fkberLong></fkberLong>                                ");
+//			body.append("        <gsber>1100</gsber>                                    ");
+//			body.append("        <yycsg>1</yycsg>                                       ");
+//			body.append("        <yydch></yydch>                                        ");
+//			body.append("        <yylob>WOL</yylob>                                     ");
+//			body.append("        <yymay></yymay>                                        ");
+//			body.append("        <yyprg>1</yyprg>                                       ");
+//			body.append("        <zzinsty>M04451</zzinsty>                              ");
+//			body.append("        <zzoffcd></zzoffcd>                                    ");
+//			body.append("        <sgtxt>20210316/계속보험료입금/수입보험료</sgtxt>              ");
+//			body.append("        <policyId></policyId>                                  ");
+//			body.append("        <fssCode></fssCode>                                    ");
+//			body.append("        <xref1>210302929798</xref1>                            ");
+//			body.append("        <xref2>000031</xref2>                                  ");
+//			body.append("        <xref3>0202003</xref3>                                 ");
+//			body.append("        <bewar>P31</bewar>                                     ");
+//			body.append("        <zuonr></zuonr>                                        ");
+//			body.append("        <lifnr></lifnr>                                        ");
+//			body.append("        <zlsch></zlsch>                                        ");
+//			body.append("        <bvtyp></bvtyp>                                        ");
+//			body.append("        <zterm></zterm>                                        ");
+//			body.append("        <funcd></funcd>                                        ");
+//			body.append("        <cinsty>192326711</cinsty>                             ");
+//			body.append("        <vbund></vbund>                                        ");
+//			body.append("        <acgbn2></acgbn2>                                      ");
+//			body.append("        <acgbn3></acgbn3>                                      ");
+//			body.append("        <acgbn4></acgbn4>                                      ");
+//			body.append("        <ZZPTFL></ZZPTFL>                                      ");
+//			body.append("        <ZZXREF3></ZZXREF3>                                      ");
+//			body.append("    </listIPSapsSlpSndItmVO>                                   ");
+//			body.append("    <listIPSapsSlpSndItmVO>                                    ");
+//			body.append("        <buzei>001</buzei>                                     ");
+//			body.append("        <newbs>40</newbs>                                      ");
+//			body.append("        <shkzg>S</shkzg>                                       ");
+//			body.append("        <hkont>2480001001</hkont>                              ");
+//			body.append("        <kostl></kostl>                                        ");
+//			body.append("        <prctr>P40095</prctr>                                  ");
+//			body.append("        <dmbtr>150000</dmbtr>                                  ");
+//			body.append("        <wrbtr>150000</wrbtr>                                  ");
+//			body.append("        <fkberLong></fkberLong>                                ");
+//			body.append("        <gsber>1100</gsber>                                    ");
+//			body.append("        <yycsg>1</yycsg>                                       ");
+//			body.append("        <yydch></yydch>                                        ");
+//			body.append("        <yylob>WOL</yylob>                                     ");
+//			body.append("        <yymay></yymay>                                        ");
+//			body.append("        <yyprg>1</yyprg>                                       ");
+//			body.append("        <zzinsty>M04451</zzinsty>                              ");
+//			body.append("        <zzoffcd></zzoffcd>                                    ");
+//			body.append("        <sgtxt>20210316/계속보험료입금/납입보험료</sgtxt>              ");
+//			body.append("        <policyId></policyId>                                  ");
+//			body.append("        <fssCode></fssCode>                                    ");
+//			body.append("        <xref1>210302929798</xref1>                            ");
+//			body.append("        <xref2>000008</xref2>                                  ");
+//			body.append("        <xref3>0202003</xref3>                                 ");
+//			body.append("        <bewar></bewar>                                        ");
+//			body.append("        <zuonr></zuonr>                                        ");
+//			body.append("        <lifnr></lifnr>                                        ");
+//			body.append("        <zlsch></zlsch>                                        ");
+//			body.append("        <bvtyp></bvtyp>                                        ");
+//			body.append("        <zterm></zterm>                                        ");
+//			body.append("        <funcd></funcd>                                        ");
+//			body.append("        <cinsty>192326711</cinsty>                             ");
+//			body.append("        <vbund></vbund>                                        ");
+//			body.append("        <acgbn2></acgbn2>                                      ");
+//			body.append("        <acgbn3></acgbn3>                                      ");
+//			body.append("        <acgbn4></acgbn4>                                      ");
+//			body.append("        <ZZPTFL></ZZPTFL>                                      ");
+//			body.append("        <ZZXREF3></ZZXREF3>                                      ");
+//			body.append("    </listIPSapsSlpSndItmVO>                                   ");
+//			body.append("</iPSapsSlpSndVO>																							");
+//			System.out.println("body:" + body.toString() + ":");			
+//			
+//			header.setBody(body.toString());
+			
+			Map reqBodyMap = new LinkedHashMap();
+			reqBodyMap.put("eSubrc", "");
+			reqBodyMap.put("eMessage", "");
+			reqBodyMap.put("eBelnr", "");
+
+			Map headerMap = new LinkedHashMap();
+			headerMap.put("sbadoc","");
+			headerMap.put("tcode","FB01");
+			headerMap.put("bpcode","02003");
+			headerMap.put("sgdocSba","");
+			headerMap.put("sgtype","G");
+			headerMap.put("gjahr","");
+			headerMap.put("monat","03");
+			headerMap.put("ldgrp","");
+			headerMap.put("bukrs","KR11");
+			headerMap.put("budat","");
+			headerMap.put("bldat","");
+			headerMap.put("blart","Z2");
+			headerMap.put("waers","KRW");
+			headerMap.put("kursf","");
+			headerMap.put("revflag","");
+			headerMap.put("sbadocR","");
+			headerMap.put("prcoffice","");
+			headerMap.put("coloffice","");
+			headerMap.put("xblnr","");
+			headerMap.put("bktxt","요금/계속보험료입금");
+			headerMap.put("acgbn1","02");
+			headerMap.put("retryn","N");
+			
+			reqBodyMap.put("iPSapsSlpSndHedrVO", headerMap);	
+			
+			List itemList = new ArrayList();
+			for(int i=0; i<1; i++) {
+				Map itemMap = new LinkedHashMap();
+				itemMap.put("buzei", "002");
+				itemMap.put("newbs", "50");
+				itemMap.put("shkzg", "H");
+				itemMap.put("hkont", "");
+				itemMap.put("kostl", "");
+				itemMap.put("prctr", "");
+				itemMap.put("dmbtr", "");
+				itemMap.put("wrbtr", "");
+				itemMap.put("fkberLong", "");
+				itemMap.put("gsber", "1100");
+				itemMap.put("yycsg", "1");
+				itemMap.put("yydch", "");
+				itemMap.put("yylob", "WOL");
+				itemMap.put("yymay", "");
+				itemMap.put("yyprg", "1");
+				itemMap.put("zzinsty", "");
+				itemMap.put("zzoffcd", "");
+				itemMap.put("sgtxt", "20210316/계속보험료입금/수입보험료");
+				itemMap.put("policyId", "");
+				itemMap.put("fssCode", "");
+				itemMap.put("xref1", "");
+				itemMap.put("xref2", "");
+				itemMap.put("xref3", "");
+				itemMap.put("bewar", "P31");
+				itemMap.put("zuonr", "");
+				itemMap.put("lifnr", "");
+				itemMap.put("zlsch", "");
+				itemMap.put("bvtyp", "");
+				itemMap.put("zterm", "");
+				itemMap.put("funcd", "");
+				itemMap.put("cinsty", "");
+				itemMap.put("vbund", "");
+				itemMap.put("acgbn2", "");
+				itemMap.put("acgbn3", "");
+				itemMap.put("acgbn4", "");
+				itemMap.put("ZZPTFL", "");
+				itemMap.put("ZZXREF3", "");
+				
+				itemList.add(itemMap);
+			}
+			reqBodyMap.put("listIPSapsSlpSndItmVO", itemList);
+			//System.out.println("reqBodyMap:" + reqBodyMap);			
+			String bodyXml = XMLUtil.mapToDocumentString(reqBodyMap, "iPSapsSlpSndVO");
+			System.out.println("====bodyXml:" + bodyXml);
+			header.setBody(bodyXml);
+			
+			//3. Eai RequestMessage 생성
+			EaiHeaderMgr reqMgr = EaiFactory.getInstance().newHeaderMgr();
+			byte[] requestDataByte = reqMgr.getData(header);
+			EaiMessage reqEaiMessage = EaiUtil.getRequestMessage(requestDataByte);
+			
+			System.out.println("reqEaiMessage:" + reqEaiMessage);
+
+			//4. Eai Send
+			EaiHeaderBean resBean = EaiUtil.sendData("I.IFRS17.SAP.SND.50120", reqEaiMessage);
+			logger.debug("getIfId()         [" + resBean.getIfId()         + "]");
+	        logger.debug("getIfResult()     [" + resBean.getIfResult()     + "]");
+	        logger.debug("getIfErrCd()      [" + resBean.getIfErrCd()      + "]");
+	        logger.debug("getIfErrMsg()     [" + resBean.getIfErrMsg()     + "]");
+	        logger.debug("getIfTrId()       [" + resBean.getIfTrId()       + "]");
+	        logger.debug("getIfSystemCd     [" + resBean.getIfSystemCd()   + "]");
+	        logger.debug("getIfHostNm()     [" + resBean.getIfHostNm()     + "]");	
+	        logger.debug("getIfPgmId()      [" + resBean.getIfPgmId()      + "]");
+	        logger.debug("getIfReqUId()     [" + resBean.getIfReqUId()     + "]");
+	        logger.debug("getIfReqTime()    [" + resBean.getIfReqTime()    + "]");
+	        logger.debug("getIfBizSvcNm()   [" + resBean.getIfBizSvcNm()   + "]");
+	        logger.debug("getIfBizMethodNm()[" + resBean.getIfBizMethodNm()+ "]");
+	        logger.debug("getIfBizInVONm()  [" + resBean.getIfBizInVONm()  + "]");
+	        logger.debug("getIfBizResult()  [" + resBean.getIfBizResult()  + "]");
+	        logger.debug("getIfBizErrCd()   [" + resBean.getIfBizErrCd()   + "]");
+	        logger.debug("getIfBizErrMsg()  [" + resBean.getIfBizErrMsg()  + "]");
+	        logger.debug("getIfFiller()     [" + resBean.getIfFiller()     + "]");
+	        logger.debug("getBody()         [" + resBean.getBody()         + "]");			
+			if("S".equals(resBean.getIfResult())) {
+				System.out.println("EAI Success!!!");
+			} else {
+				System.out.println("EAI Error!!!");
+			}
+			Map resBodyMap = XMLUtil.documentStringToMap(resBean.getBody());
+			System.out.println("====resBodyMap:" + resBodyMap);
+			String eSubrc = (String)resBodyMap.get("eSubrc");
+			Map iPSapsSlpSndHedrVOMap = (Map)resBodyMap.get("iPSapsSlpSndHedrVO");
+			System.out.println("====iPSapsSlpSndHedrVOMap:" + iPSapsSlpSndHedrVOMap);
+			
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}	
+
+	public static void send50110() {
+		try {
+			
+			//1. Header부 셋팅
+			EaiHeaderBean header = EaiUtil.getRequestHeaderBean();
+			header.setIfId("IERAS50110");	//경리중계분개룰COA정보
+			header.setIfReqUId("");	//호출자
+			header.setIfPgmId("");  //프로그램 ID
+			
+//			StringBuilder body = new StringBuilder();
+//			body.append("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>	");
+//			body.append("<iPSapsSlpSndVO>                                               ");
+//			body.append("    <eSubrc></eSubrc>                                          ");
+//			body.append("    <eMessage></eMessage>                                      ");
+//			body.append("    <I_TYPE></I_TYPE>                                          ");
+//			body.append("    <listIPSapsSlpSndItmVO>                                    ");
+//			body.append("        <BUKRS>KR11</BUKRS>                                    ");
+//			body.append("        <ENTITY>01</ENTITY>                                    ");
+//			body.append("        <BP>01001</BP>                                         ");
+//			body.append("        <HKONT>1110011902</HKONT>                              ");
+//			body.append("        <ENTITY_NAME>신계약</ENTITY_NAME>                        ");
+//			body.append("        <BP_NAME>당일취소환입</BP_NAME>                            ");
+//			body.append("        <BT_NAME>실지급금액</BT_NAME>                             ");
+//			body.append("        <RT_FLAG></RT_FLAG>                                    ");
+//			body.append("    </listIPSapsSlpSndItmVO>                                   ");
+//			body.append("    <listIPSapsSlpSndItmVO>                                    ");
+//			body.append("        <BUKRS>KR11</BUKRS>                                    ");
+//			body.append("        <ENTITY>01</ENTITY>                                    ");
+//			body.append("        <BP>01001</BP>                                         ");
+//			body.append("        <HKONT>1110012410</HKONT>                              ");
+//			body.append("        <ENTITY_NAME>신계약</ENTITY_NAME>                        ");
+//			body.append("        <BP_NAME>당일취소환입</BP_NAME>                            ");
+//			body.append("        <BT_NAME>실지급금액</BT_NAME>                             ");
+//			body.append("        <RT_FLAG></RT_FLAG>                                    ");
+//			body.append("    </listIPSapsSlpSndItmVO>                                   ");
+//			body.append("</iPSapsSlpSndVO>		                                          ");
+//			System.out.println("body:" + body.toString() + ":");			
+			
+//			header.setBody(body.toString());
+			
+			//2. Body부 생성
+			Map reqBodyMap = new LinkedHashMap();
+			reqBodyMap.put("eSubrc","");
+			reqBodyMap.put("eMessage","");
+			reqBodyMap.put("I_TYPE","");
+			
+			List itemList = new ArrayList();
+			for(int i=0; i<2; i++) {
+				Map itemMap = new LinkedHashMap();
+				itemMap.put("BUKRS", "KR11");
+				itemMap.put("ENTITY", "01");
+				itemMap.put("BP", "01001");
+				itemMap.put("HKONT", "");
+				itemMap.put("ENTITY_NAME", "신계약");
+				itemMap.put("BP_NAME", "당일취소환입");
+				itemMap.put("BT_NAME", "실지급금액");
+				itemMap.put("RT_FLAG", "");
+				itemList.add(itemMap);
+			}
+
+			reqBodyMap.put("listIPSapsSlpSndItmVO", itemList);
+			String xmlStr = XMLUtil.mapToDocumentString(reqBodyMap, "iPSapsSlpSndVO");
+
+			header.setBody(xmlStr);
+			
+			//3. Eai RequestMessage 생성
+			EaiHeaderMgr reqMgr = EaiFactory.getInstance().newHeaderMgr();
+			byte[] requestDataByte = reqMgr.getData(header);
+			EaiMessage reqEaiMessage = EaiUtil.getRequestMessage(requestDataByte);
+			
+			System.out.println("reqEaiMessage:" + reqEaiMessage);
+
+			//4. Eai Send
+			EaiHeaderBean resBean = EaiUtil.sendData("I.IFRS17.SAP.SND.50110", reqEaiMessage);
+			logger.debug("getIfId()         [" + resBean.getIfId()         + "]");
+	        logger.debug("getIfResult()     [" + resBean.getIfResult()     + "]");
+	        logger.debug("getIfErrCd()      [" + resBean.getIfErrCd()      + "]");
+	        logger.debug("getIfErrMsg()     [" + resBean.getIfErrMsg()     + "]");
+	        logger.debug("getIfTrId()       [" + resBean.getIfTrId()       + "]");
+	        logger.debug("getIfSystemCd     [" + resBean.getIfSystemCd()   + "]");
+	        logger.debug("getIfHostNm()     [" + resBean.getIfHostNm()     + "]");	
+	        logger.debug("getIfPgmId()      [" + resBean.getIfPgmId()      + "]");
+	        logger.debug("getIfReqUId()     [" + resBean.getIfReqUId()     + "]");
+	        logger.debug("getIfReqTime()    [" + resBean.getIfReqTime()    + "]");
+	        logger.debug("getIfBizSvcNm()   [" + resBean.getIfBizSvcNm()   + "]");
+	        logger.debug("getIfBizMethodNm()[" + resBean.getIfBizMethodNm()+ "]");
+	        logger.debug("getIfBizInVONm()  [" + resBean.getIfBizInVONm()  + "]");
+	        logger.debug("getIfBizResult()  [" + resBean.getIfBizResult()  + "]");
+	        logger.debug("getIfBizErrCd()   [" + resBean.getIfBizErrCd()   + "]");
+	        logger.debug("getIfBizErrMsg()  [" + resBean.getIfBizErrMsg()  + "]");
+	        logger.debug("getIfFiller()     [" + resBean.getIfFiller()     + "]");
+	        logger.debug("getBody()         [" + resBean.getBody()         + "]");			
+			if("S".equals(resBean.getIfResult())) {
+				System.out.println("EAI Success!!!");
+			} else {
+				System.out.println("EAI Error!!!");
+			}
+			
+			Map resBodyMap = XMLUtil.documentStringToMap(resBean.getBody());
+			System.out.println("resBodyMap:" + resBodyMap);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void sendFileTest() {
+		try {
+			
+			String userId = "";
+			String sourceSystemCode = EaiUtil.EAI_SYSTEM_IFRS17;
+			String sourceSystemPath = "/SHARE/DATA/fi";
+			String sourceSystemFileName = "test.txt";
+			String transferredFilesCount = "1";
+			String actionAfterTransfer = "";
+			String sourceSystemFileBackupPath = "";
+			String targetSystemCode = EaiUtil.EAI_SYSTEM_SAP;
+			String targetSystemPath = "/transSAP/AQ1/kr/IMPORT/FI/INTERFACE/SBA/";
+			EaiHeaderBean resBean = EaiUtil.sendEaiFile(userId, sourceSystemCode, sourceSystemPath, sourceSystemFileName, transferredFilesCount, actionAfterTransfer, sourceSystemFileBackupPath, targetSystemCode, targetSystemPath);
+			if("S".equals(resBean.getIfResult())) {
+				System.out.println("EAI Success!!!");
+			} else {
+				System.out.println("EAI Error!!!");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String [] args) {
+		try {
+			
+			System.setProperty("eai.home", "C:/dev/ifrs17/workspace/ifrs17/src/main/resources");
+
+			sendFileTest();
+//			send50110();
+//			send50120();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	*/
+}

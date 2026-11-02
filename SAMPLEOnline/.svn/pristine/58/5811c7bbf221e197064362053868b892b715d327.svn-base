@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/gnb.css">
+
+<link rel="stylesheet" type="text/css" media="all" href="css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/jquery.mCustomScrollbar.css" >
+
+<script type="text/javascript" src="js/common/common.js"></script>
+<script type="text/javascript" src="js/common/html5.js"></script>
+<script src="js/jquery/jquery-1.12.4.js"></script>
+<script src="js/jquery/jquery-ui.js"></script>
+
+<script type="text/javascript" src="js/gnb/gnb.js"></script>
+
+</head>
+
+<body>
+
+ <!-- top -->
+       <header class="header_wrap clearfix">
+       <h1><img src="img/common/logo.png" alt="ABL" /></h1>
+       	<nav id="tnb_menu" class="clearfix">
+        	<ul>
+                <li><a href="#" class="active"><i class="m1"></i>결산모니터링</a></li>
+            	<li><a href="#" class=""><i class="m2"></i> 부채결산</a></li>
+                <li><a href="#"><i class="m3"></i> 사업비배부</a></li>
+                <li><a href="#"><i class="m4"></i> 재무회계</a></li>
+                <li><a href="#"><i class="m5"></i> 관리</a></li>
+            </ul>
+        </nav>
+        <div class="header_right">
+       	  <p><strong>IT개발부 남용희</strong>님 <strong>2020-12-01 01:57:31</strong> 로그인하셨습니다.</p>
+            <a href="#"><img src="img/common/header_modify_info_icon.png" alt="정보변경" />정보변경</a>
+            <a href="#"><img src="img/common/header_logout_info_icon.png" alt="로그아웃" />로그아웃</a>
+        </div>
+      </header>
+       <!-- top -->
+
+
+
+
+</body>
+</html>

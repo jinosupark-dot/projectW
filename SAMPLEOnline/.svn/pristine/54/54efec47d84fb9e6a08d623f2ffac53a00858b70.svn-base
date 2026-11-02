@@ -1,0 +1,13 @@
+# ===================================================================
+# FW 공통 메시지 설정 (UTF-8 인코딩)
+# ===================================================================
+common.sessionTimeOut=세션이 종료되었습니다.
+fail.common.msg=에러가 발생했습니다!!
+fail.common.msg1=에러가 발생했습니다!!<br>error msg: {0}
+fail.common.msg2=에러가 발생했습니다!!<br>error code: {0}<br>error msg: {1}
+fail.common.404msg=해당페이지를 찾을수 없습니다!!
+fail.common.405msg=해당페이지에 대한 접근방식(GET or POST)이 올바르지 않습니다.!!
+fail.common.accessDenied=로그인후 이용하세요!!
+fail.common.Authentication=해당화면에 대한 권한이 없습니다!!
+fail.common.transaction=DATA처리중 에러가 발생했습니다!!
+fail.common.sql=sql 에러가 발생했습니다!!<br>error code: {0}<br>error msg: {1}

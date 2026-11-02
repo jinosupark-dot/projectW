@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!--- Section -->
+<section> 
+  
+  <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">수기테이블속성관리</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">
+            <div class="item">
+              <p class="title">업무구분</p>
+              <div>
+                <select class="wi100">
+                  <option>부채결산</option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">테이블명</p>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+              </div>
+            </div>
+            
+            <div class="item">
+              <p class="title">테이블ID</p>
+              <div class="clearfix">
+                <input type="text" style="width:100px" class="fl mr5">
+                <button class="btn_pop_search fl mr5"><span class="blind">조회</span></button>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">수기관리 여부</p>
+              <div>
+                <input type="text" class="">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- btn -->
+    <div class="btnWrap txtar">
+     `<button class="btn-save"><span>저장</span></button>
+    </div>
+    <!-- btn//--> 
+    <!-- table -->
+    <div class="tableWrap">
+      <table class="tableA">
+        <thead>
+          <tr>
+            <th>테이블명</th>
+            <th>테이블 ID</th>
+            <th>업무구분</th>
+            <th>수기관리여부 </th>
+            <th>최종업데이트 일시</th>
+            <th>최종업데이트 사번</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>          	
+            <td>할인율정보</td>
+            <td>TB_ACART00</td>
+            <td>부채결산</td>
+            <td>Y</td>
+            <td>2018-03-02 13:07</td>
+            <td>89001208</td>
+          </tr>
+          <tr>          	
+            <td>할인율정보</td>
+            <td>TB_ACART00</td>
+            <td>부채결산</td>
+            <td>Y</td>
+            <td>2018-03-02 13:07</td>
+            <td>89001208</td>
+          </tr>
+          <tr>          	
+            <td>할인율정보</td>
+            <td>TB_ACART00</td>
+            <td>부채결산</td>
+            <td>Y</td>
+            <td>2018-03-02 13:07</td>
+            <td>89001208</td>
+          </tr>
+          <tr>          	
+            <td>할인율정보</td>
+            <td>TB_ACART00</td>
+            <td>부채결산</td>
+            <td>Y</td>
+            <td>2018-03-02 13:07</td>
+            <td>89001208</td>
+          </tr>
+          <tr>          	
+            <td>할인율정보</td>
+            <td>TB_ACART00</td>
+            <td>부채결산</td>
+            <td>Y</td>
+            <td>2018-03-02 13:07</td>
+            <td>89001208</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+   
+    <!-- table // --> 
+    <p class="grid_control_btn txtar">
+      <button class="btn-grid-add"><span>행추가</span></button>
+    </p>
+  </div>
+  <!-- content01//--> 
+  <!-- Content //--> 
+</section>
+<!--- Section -->
+
+</body>
+</html>

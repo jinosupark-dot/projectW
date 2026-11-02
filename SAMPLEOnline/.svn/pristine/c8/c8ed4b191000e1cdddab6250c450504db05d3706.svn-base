@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+ <!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">Audit Trail - 잔액명세</h3>
+      </div>
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner">
+            <div class="item">
+              <p class="title">마감년월</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- searchform // --> 
+
+      <!-- table -->
+      <h4 class="title mt50">잔액명세</h4>
+      <div class="tableWrap ">
+        <table class="tableA">
+          <thead>
+            <tr>
+              <th colspan="6">검증항목</th>
+              <th colspan="7">JR금액</th>
+              <th>SPA</th>
+              <th rowspan="2">차이(SAP-JR)</th>
+            </tr>
+            <tr>
+              <th>재무제표항목/계정과목코드</th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>계정과목</th>
+              <th>집합별 BEL 변동</th>
+              <th>집합별 RA변동분석내역</th>
+              <th>원천테이블3</th>
+              <th>원천테이블4</th>
+              <th>원천테이블5</th>
+              <th>미수미지급</th>
+              <th>null</th>
+              <th>N1</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!--합계일경우 total class 추가-->
+            <tr>
+              <td class="">
+                <div class="clearfix">
+                  <span class="fl total">f17A201000000</span>
+                  <span class="fr total"></span>
+                </div>
+              </td>
+              <td colspan="5" rowspan="4"></td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+              <td class="tr total"> 0</td>
+            </tr>  
+            <!--합계일경우//-->
+            <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl">f17A201000000</span>
+                  <span class="fr"></span>
+                </div>
+              </td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+            </tr>  
+           <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl">f17A201000000</span>
+                  <span class="fr"></span>
+                </div>
+              </td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="clearfix">
+                  <span class="fl"></span>
+                  <span class="fr">1661020101</span>
+                </div>
+              </td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+              <td class="tr"> 0</td>
+            </tr>                     
+          </tbody>
+        </table>
+      </div>
+    <!-- table // --> 
+   
+    
+  </div>
+  <!-- Content //--> 
+  </div>
+</body>
+</html>

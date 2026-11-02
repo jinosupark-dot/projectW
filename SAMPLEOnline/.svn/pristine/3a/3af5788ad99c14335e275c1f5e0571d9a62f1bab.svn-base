@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.RoleMapper">
+	
+	<!--TB_IMGSYF03 (역할기본)  역할조회-->
+	<select id="selectRoleList" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+		SELECT /*RoleMapper.selectRoleList  역할조회 */  
+			   AUTH_GRP_ID           										/*권한그룹ID*/
+			 , AUTH_GRP_NM                                                 /*권한그룹명*/
+			 , AUTH_GRP_TYP_CD                                             /*권한그룹유형코드*/
+			 , AUTH_GRP_SEQ                                                /*권한그룹순서*/
+			 , AUTH_GRP_EXPLN                                              /*권한그룹설명*/
+			 , AUTH_GRP_LVL                                                /*권한그룹레벨*/
+			 , UPP_AUTH_GRP_ID                                             /*상위권한그룹ID*/
+			 , REGNT_ENO                                                   /*등록자사번*/
+			 , TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM                     /*등록일시*/
+			 , TRTR_ENO                                                    /*처리자사번*/
+			 ,TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                      /*처리일시*/
+		  FROM S_MG.TB_IMGSYF03                                            /*역할기본*/
+		 WHERE 1 = 1 
+		   AND ROWNUM <= 10001
+		ORDER BY AUTH_GRP_LVL
+		       , UPP_AUTH_GRP_ID
+		       , AUTH_GRP_SEQ ASC
+		 ]]>
+	</select>
+
+    <!-- TB_IMGSYF03 (역할기본)의 UPP_AUTH_GRP_ID(역할 상위아이디) 로  아이디의 하위 역할 조회-->
+	<select id="selectRoleListByUppRoleId" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+		SELECT 		/*RoleMapper.selectRoleListByUppRoleId  (역할 상위아이디) 로  아이디의 하위 역할 조회 */  
+			 AUTH_GRP_ID ,                                                    /*권한그룹ID*/   
+			 AUTH_GRP_NM ,                                                    /*권한그룹명*/    
+			 AUTH_GRP_TYP_CD ,                                                /*권한그룹유형코드*/ 
+			 AUTH_GRP_SEQ ,                                                   /*권한그룹순서*/   
+			 AUTH_GRP_EXPLN ,                                                 /*권한그룹설명*/   
+			 AUTH_GRP_LVL ,                                                   /*권한그룹레벨*/   
+			 UPP_AUTH_GRP_ID ,                                                /*상위권한그룹ID*/ 
+			 REGNT_ENO ,                                                      /*등록자사번*/    
+			 TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                         /*등록일시*/     
+			 TRTR_ENO ,                                                       /*처리자사번*/    
+			 TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                          /*처리일시*/     
+		 FROM S_MG.TB_IMGSYF03                                                /*역할기본*/     
+			 WHERE UPP_AUTH_GRP_ID= #{authGrpId}
+			 ORDER BY AUTH_GRP_LVL, UPP_AUTH_GRP_ID, AUTH_GRP_SEQ ASC
+		 ]]>
+	</select>
+
+    	<!-- TB_IMGSYF04 (역할별 특별사용자) 조회  -->
+	<select id="selectUserByRoleList" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+          SELECT 		/*RoleMapper.selectUserByRoleList  (역할별 특별사용자) 조회   */  
+       		ROW_NUMBER() OVER(ORDER BY A.REG_DTM,A.TRT_DTM ASC) AS ROW_NUM,
+			A.AUTH_ROL_ID,                                                    /*권한역할ID*/
+			A.USER_ID ,                                                       /*사용자ID*/
+			A.USER_ENO ,                                                      /*사용자사번*/
+			A.USER_NM ,                                                       /*사용자명*/
+			A.ORG_NO,                                                         /*조직번호*/
+			A.AUTH_RET_YN ,                                                   /*권한보유여부*/
+			NVL(A.MDFC_PSB_YN, 'N') AS MDFC_PSB_YN,                           /*수정가능여부*/
+			A.REGNT_ENO ,                                                     /*등록자사번*/ 
+			TO_CHAR(A.REG_DTM, 'YYYYMMDD') AS REG_DTM,                        /*등록일시*/  
+			A.TRTR_ENO ,                                                      /*처리자사번*/ 
+			TO_CHAR(A.TRT_DTM, 'YYYYMMDD') AS TRT_DTM,                        /*처리일시*/  
+			B.ORG_NM                                                          /*조직명*/
+		FROM S_MG.TB_IMGSYF04 A                                               /*역할별사용자기본*/
+			,EAGLE.TB_SAOGF01 B                                               /*조직기본*/  
+			WHERE A.ORG_NO = B.ORG_NO
+			  AND A.AUTH_ROL_ID = #{authGrpId}
+			  AND A.AUTH_RET_YN = 'Y'
+			  AND ROWNUM <= 10001
+		 ]]>
+	</select>
+
+    <!-- TB_IMGSYF05 (역할별화면) 조회  -->
+	<select id="selectMenuByRoleList" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+       SELECT 		/*RoleMapper.selectMenuByRoleList  (역할별화면) 조회   */  
+       		ROW_NUMBER() OVER(ORDER BY REG_DTM,TRT_DTM ASC) AS ROW_NUM,      
+			AUTH_ROL_ID,                                                     /*권한역할ID*/
+			MENU_ID ,                                                        /*메뉴ID*/
+			MENU_NM ,                                                        /*메뉴명*/
+			REGNT_ENO ,                                                     /*등록자사번*/ 
+			TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                        /*등록일시*/  
+			TRTR_ENO ,                                                      /*처리자사번*/ 
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                         /*처리일시*/  
+		FROM S_MG.TB_IMGSYF05                                                /*역할별메뉴기본*/
+			WHERE AUTH_ROL_ID = #{authGrpId}
+			  AND ROWNUM <= 10001
+		 ]]>
+		 
+	</select>
+
+    	<!--TB_IMGSYF06 (역할별 부서)조회  -->
+	<select id="selectRoleByRuleSettingList" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+        SELECT 		/*RoleMapper.selectRoleByRuleSettingList  (역할별 부서)조회 */  
+       		ROW_NUMBER() OVER(ORDER BY REG_DTM,TRT_DTM) AS ROW_NUM,
+			AUTH_ROL_ID,                                                       /*권한역할ID*/
+			ORG_CD 					AS ORG_NO,                                 /*조직코드*/
+			DUTY_ID,                                                           /*직책ID*/
+			ORG_NM ,                                                           /*조직명*/
+			REGNT_ENO ,                                                        /*등록자사번*/
+			TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                           /*등록일시*/ 
+			TRTR_ENO ,                                                         /*처리자사번*/
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                            /*처리일시*/ 
+		FROM S_MG.TB_IMGSYF06                                                  /*역할자동부여기본*/
+		WHERE AUTH_ROL_ID = #{authGrpId}
+		 ]]>
+	</select>
+	
+	<!-- TB_IMGSYF03 (역할기본) 역할 그룹/역할 추가-->
+	<insert id="insertRoleList" parameterType="map">
+		<![CDATA[                      		
+		INSERT /*RoleMapper.insertRoleList  역할 그룹/역할 추가 */
+		INTO S_MG.TB_IMGSYF03	/*역할기본*/             
+			( 
+				AUTH_GRP_ID ,                                                /*권한그룹ID*/   
+				AUTH_GRP_NM ,                                                /*권한그룹명*/    
+				AUTH_GRP_EXPLN ,                                             /*권한그룹유형코드*/ 
+				AUTH_GRP_TYP_CD ,                                            /*권한그룹순서*/   
+				AUTH_GRP_SEQ ,                                               /*권한그룹설명*/   
+				AUTH_GRP_LVL ,                                               /*권한그룹레벨*/   
+				UPP_AUTH_GRP_ID ,                                            /*상위권한그룹ID*/ 
+				REGNT_ENO ,                                                  /*등록자사번*/    
+				REG_DTM ,                                                    /*등록일시*/     
+				TRTR_ENO,                                                    /*처리자사번*/    
+				TRT_DTM                                                      /*처리일시*/     
+			)                                                               
+		VALUES
+		( 
+			#{authGrpId} ,
+			#{authGrpNm} ,
+			#{authGrpExpln} ,
+			#{authGrpTypCd} ,
+			#{authGrpSeq} ,
+			#{authGrpLvl} ,
+			#{uppAuthGrpId} ,
+			#{regntEno} ,
+			CURRENT_TIMESTAMP ,
+			#{trtrEno} ,
+			CURRENT_TIMESTAMP 
+		)
+		]]>
+	</insert>
+
+	<!-- TB_IMGSYF04 (역할별 특별사용자) 사용자 추가-->
+	<insert id="insertUserByRoleList" parameterType="map">
+		<![CDATA[                      		
+		INSERT /*RoleMapper.insertUserByRoleList  사용자 추가- */ 
+		INTO S_MG.TB_IMGSYF04	/* 역할별사용자기본 */
+			( 
+				AUTH_ROL_ID ,                                         /*권한역할ID*/
+				USER_ID ,                                             /*사용자ID*/ 
+				USER_ENO ,                                            /*사용자사번*/ 
+				USER_NM ,                                             /*사용자명*/  
+				ORG_NO ,                                              /*조직번호*/  
+				AUTH_RET_YN ,                                         /*권한보유여부*/    
+				MDFC_PSB_YN,                                          /*수정가능여부*/
+				REGNT_ENO ,                                           /*등록자사번*/ 
+				REG_DTM ,                                             /*등록일시*/  
+				TRTR_ENO,                                             /*처리자사번*/ 
+				TRT_DTM                                               /*처리일시*/  
+			)                                                         
+		VALUES
+			( 
+				#{authRolId} ,
+				#{userEno} ,
+				#{userId} ,
+				#{userNm} ,
+				#{orgNo} ,
+				'Y',
+				#{mdfcPsbYn},
+				#{regntEno} ,
+				CURRENT_TIMESTAMP ,
+				#{trtrEno} ,
+				CURRENT_TIMESTAMP 
+			)
+		]]>
+	</insert>
+	
+	<!-- TB_IMGSYF04 (역할별특별사용자) 사용자 수정-->
+	<update id="updateUserByRoleList" parameterType="map">                      		
+	<![CDATA[
+		UPDATE /*RoleMapper.updateUserByRoleList  역할조회 */ 
+		S_MG.TB_IMGSYF04	/* 역할별사용자기본 */           
+		   SET MDFC_PSB_YN	= #{mdfcPsbYn}                          /*수정가능여부*/
+		   	 , TRTR_ENO 	= #{trtrEno}                            /*처리자사번*/ 
+			 , TRT_DTM 		= CURRENT_TIMESTAMP                     /*처리일시*/  
+		 WHERE AUTH_ROL_ID	= #{authRolId}
+		   AND USER_ID		= #{userId}
+			]]>
+	</update>
+
+	<!-- TB_IMGSYF05 (역할별 화면) 화면 추가-->
+    <insert id="insertMenuByRoleList" parameterType="map">
+		<![CDATA[                      		
+		INSERT /*RoleMapper.insertMenuByRoleList  화면 추가 */ 
+		INTO S_MG.TB_IMGSYF05	/* 역할별메뉴기본 */     	 		
+			( 
+				AUTH_ROL_ID ,                                    /*권한역할ID*/     
+				MENU_ID ,                                        /*메뉴ID*/       
+				MENU_NM ,                                        /*메뉴명*/        
+				MDFC_PSB_YN ,                                    /*수정가능여부*/   
+				REGNT_ENO ,                                      /*등록자사번*/      
+				REG_DTM ,                                        /*등록일시*/       
+				TRTR_ENO,                                        /*처리자사번*/      
+				TRT_DTM                                          /*처리일시*/       
+			)                                                    
+		VALUES
+			( 
+				#{authRolId} ,
+				#{menuId} ,
+				#{menuNm} ,
+				#{mdfcPsbYn} ,
+				#{regntEno} ,
+				CURRENT_TIMESTAMP ,
+				#{trtrEno} ,
+				CURRENT_TIMESTAMP 
+			)
+		]]>
+	</insert>
+
+<!-- TB_IMGSYF05 (역할별 부서) 부서 추가-->
+    <insert id="insertRoleByRuleSettingList" parameterType="map">
+		<![CDATA[                      		
+		INSERT /*RoleMapper.insertRoleByRuleSettingList  부서 추가 */ 
+		INTO S_MG.TB_IMGSYF06	/* 역할자동부여기본 */
+			( 
+				AUTH_ROL_ID ,                                     /*권한역할ID*/   
+				ORG_CD ,                                          /*조직코드*/     
+				DUTY_ID ,                                         /*직책ID*/     
+				ORG_NM ,                                          /*조직명*/      
+				REGNT_ENO ,                                       /*등록자사번*/    
+				REG_DTM ,                                         /*등록일시*/     
+				TRTR_ENO,                                         /*처리자사번*/    
+				TRT_DTM                                           /*처리일시*/     
+			)                                                     
+		VALUES
+			( 
+				#{authRolId} ,
+				#{orgNo} ,
+				'WHL'  ,
+				#{orgNm} ,
+				#{regntEno} ,
+				CURRENT_TIMESTAMP ,
+				#{trtrEno} ,
+				CURRENT_TIMESTAMP 
+			)
+		]]>
+	</insert>
+
+    <!-- TB_IMGSYF03 (역할기본) 역할 그룹/역할 수정-->
+	<update id="updateRoleList" parameterType="map">
+		<![CDATA[                      		
+		UPDATE /*RoleMapper.updateRoleList  역할 그룹/역할 수정 */  
+		S_MG.TB_IMGSYF03	/* 역할기본 */       
+		SET 
+			AUTH_GRP_EXPLN = #{authGrpExpln} ,                            /*권한그룹설명*/
+			AUTH_GRP_NM = #{authGrpNm} ,                                  /*권한그룹명*/
+			AUTH_GRP_SEQ = #{authGrpSeq} ,                                /*권한그룹순서*/
+			TRTR_ENO = #{trtrEno} ,                                       /*처리자사번*/
+			TRT_DTM = CURRENT_TIMESTAMP                                   /*처리일시*/
+		
+		WHERE AUTH_GRP_ID= #{authGrpId}
+		]]>
+	</update>
+
+	<!-- TB_IMGSYF03 (역할기본) 역할 그룹/역할 삭제-->
+	<delete id="deleteRoleList" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteRoleList  역할 삭제 */  
+		FROM S_MG.TB_IMGSYF03	/*역할기본*/   		
+		WHERE AUTH_GRP_ID = #{authGrpId}
+		]]>
+	</delete>
+	
+	<!--TB_IMGSYF03 (역할기본)역활 그룹 하위 역할들 일괄삭제-->
+	<delete id="deleteRoleInfoByGroup" parameterType="map" >
+		<![CDATA[                      		
+	 	DELETE /*RoleMapper.deleteRoleInfoByGroup   하위 역할들 일괄삭제 */
+	 	FROM S_MG.TB_IMGSYF03	/*역할기본*/
+	 	WHERE 1=1
+	        AND UPPER(UPP_AUTH_GRP_ID) LIKE UPPER(#{authGrpId}||'%')
+		]]>
+	</delete>
+	
+	<!-- TB_IMGSYF04 (역할별 사용자) 사용자 삭제-->
+	<delete id="deleteUserByRoleList" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteUserByRoleList  사용자 삭제 */ 
+		FROM S_MG.TB_IMGSYF04	/* 역할별사용자기본 */		
+		WHERE USER_ID = #{userId}
+			AND AUTH_ROL_ID = #{authRolId}
+		]]>
+	</delete>
+	
+	<!-- TB_IMGSYF05 (역할별 화면) 화면 삭제-->
+	<delete id="deleteMenuByRoleList" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteMenuByRoleList  화면 삭제 */
+		FROM S_MG.TB_IMGSYF05	/* 역할별메뉴기본 */   		
+		WHERE AUTH_ROL_ID = #{authRolId}
+		    AND MENU_ID = #{menuId}
+		]]>
+	</delete>
+	
+	<!-- TB_IMGSYF06 (역할별 부서) 부서 삭제-->		
+	<delete id="deleteRoleByRuleSettingList" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteRoleByRuleSettingList  역할별 부서 삭제 */ 
+		FROM S_MG.TB_IMGSYF06	/* 역할자동부여기본 */
+		WHERE AUTH_ROL_ID = #{authRolId}
+		    AND ORG_CD = #{orgNo}
+		    AND DUTY_ID = #{dutyId}
+		]]>
+	</delete>
+		
+	<!-- TB_IMGSYF04 (역할별 사용자) 역할 삭제시 삭제된 사용자 삭제된 역할의 AUTH_ROL_ID 를 KEY로 가지고 있는 역할별 특정사용자 일괄 삭제-->
+	<delete id="deleteUserByRoleListBundle" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteUserByRoleListBundle  역할별 특정사용자 일괄 삭제 */  
+		FROM S_MG.TB_IMGSYF04	/* 역할별사용자기본 */
+		WHERE AUTH_ROL_ID LIKE #{authGrpId}||'%'
+		]]>
+	</delete>
+	
+	<!-- TB_IMGSYF05 (역할별 화면) 역할 삭제시 삭제된 사용자 삭제된 역할의 AUTH_ROL_ID 를 KEY로 가지고 있는 역할별 화면 일괄 삭제-->
+	<delete id="deleteMenuByRoleListBundle" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteMenuByRoleListBundle  역할별 화면 일괄 삭제 */ 
+		FROM S_MG.TB_IMGSYF05	/* 역할별메뉴기본 */  
+		WHERE AUTH_ROL_ID LIKE #{authGrpId}||'%'
+		]]>
+	</delete>
+	<!-- TB_IMGSYF06 (역할별 부서) 역할 삭제시 삭제된 사용자 삭제된 역할의 AUTH_ROL_ID 를 KEY로 가지고 있는 역할별 부서 일괄 삭제-->
+	<delete id="deleteRoleByRuleSettingListBundle" parameterType="map">
+		<![CDATA[                      		
+		DELETE /*RoleMapper.deleteRoleByRuleSettingListBundle  역할별 부서 일괄 삭제 */ 
+		FROM S_MG.TB_IMGSYF06	/* 역할자동부여기본 */   
+		WHERE AUTH_ROL_ID LIKE #{authGrpId}||'%'
+		]]>
+	</delete>
+
+	<!--TB_SAOGF01(조직기본),TB_IMGSYF01(사용자) 사원/조직 조회 팝업 -->
+	<select id="searchStaff_Popup" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+		SELECT 		/*RoleMapper.searchStaff_Popup   사원/조직 조회 팝업  */  
+			    ROW_NUMBER() OVER(ORDER BY A.ORG_NO,ORG_NM,A.USER_ENO,A.USER_NM ASC) AS ROW_NUM,
+				A.USER_ID,                                       /*사용자아이디*/
+				A.USER_ENO ,                                     /*사용자사번*/
+				A.USER_NM ,                                      /*사용자이름*/
+				A.ORG_NO,                                        /*조직번호*/
+				A.DUTY_ID,                                       /*직책아이디*/
+				A.REGNT_ENO ,                                    /*등록자사번*/
+				A.REG_DTM,                                       /*등록일시*/
+				A.TRTR_ENO ,                                     /*처리자사번*/
+				A.TRT_DTM,                                       /*처리일시*/
+				A.ORG_NM,                                        /*조직이름*/
+				A.UPP_ORG_NO,                                    /*상위조직번호*/
+				A.UPP_ORG_NM                                     /*상위조직이름*/
+		FROM 
+	       (SELECT                                                           
+				A.USER_ID,                                                      /*사용자아이디*/
+				A.USER_ENO ,                                                    /*사용자사번*/
+				A.USER_NM ,                                                     /*사용자이름*/
+				A.ORG_NO,                                                       /*조직번호*/
+				A.DUTY_ID,                                                      /*직책아이디*/
+				A.REGNT_ENO ,                                                   /*등록자사번*/
+				TO_CHAR(A.REG_DTM, 'YYYYMMDD') AS REG_DTM,                      /*등록일시*/ 
+				A.TRTR_ENO ,                                                    /*처리자사번*/
+				TO_CHAR(A.TRT_DTM, 'YYYYMMDD') AS TRT_DTM,                      /*처리일시*/ 
+				B.ORG_NM,                                                       /*조직이름*/
+				B.UPP_ORG_NO                                                    /*상위조직번호*/
+				, (
+				SELECT C.ORG_NM                                                 /*조직이름*/
+				  FROM EAGLE.TB_SAOGF01 C                                       /*조직기본*/
+					WHERE C.ORG_NO = B.UPP_ORG_NO 
+					) AS UPP_ORG_NM
+			FROM S_MG.TB_IMGSYF01 A                                            /*사용자*/
+				,EAGLE.TB_SAOGF01 B                                            /*조직기본*/
+				WHERE A.ORG_NO = B.ORG_NO 
+                  AND  A.STAT_CD = '1'
+				  AND B.ORG_TYP_CD ='99'
+			      AND B.CLOS_YMD = '99991231') A
+			WHERE 1=1
+			
+		 ]]>
+		 <if test='scCd == "user" '>
+			<![CDATA[
+			   AND  A.USER_ENO LIKE '%'||#{userEno}||'%'
+			   AND  A.USER_NM LIKE '%'||#{userNm}||'%'
+			]]>
+		</if>
+		 <if test='scCd == "group" '>
+			<![CDATA[
+				AND (A.UPP_ORG_NO LIKE '%'||#{orgNo}||'%'
+				OR A.ORG_NO LIKE '%'||#{orgNo}||'%' )  
+				
+				AND (A.UPP_ORG_NM LIKE '%'||#{orgNm}||'%'
+				OR A.ORG_NM LIKE '%'||#{orgNm}||'%') 
+			]]>
+		</if>
+	</select>
+	
+	<!--TB_SAOGF01(조직기본) 조직 조회 팝업 -->
+	<select id="searchOrg_Popup" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+       SELECT 			/*RoleMapper.searchOrg_Popup  조직 조회 팝업  */  
+        	  ROW_NUMBER() OVER(ORDER BY A.ORG_NO,A.ORG_NM ASC) AS ROW_NUM
+       		, A.ORG_NO                                                       /*조직번호*/
+       		, A.ORG_NM                                                       /*조직이름*/
+       		, A.UPP_ORG_NO                                                   /*상위조직번호*/
+       		, A.UPP_ORG_NM                                                   /*상위조직이름*/ 
+       		, A.REGNT_ENO                                                    /*등록자사번*/
+       		, A.REG_DTM                                                      /*등록일시*/ 
+       		, A.TRTR_ENO                                                     /*처리자사번*/
+       	 FROM (SELECT 
+				A.ORG_NO,                                                     /*조직번호*/
+				A.ORG_NM,                                                     /*조직이름*/
+				A.UPP_ORG_NO,                                                 /*상위조직번호*/
+				A.REGNT_ENO ,                                                 /*등록자사번*/
+				TO_CHAR(A.REG_DTM, 'YYYYMMDD') AS REG_DTM,                    /*등록일시*/
+				A.TRTR_ENO ,                                                  /*처리자사번*/
+				TO_CHAR(A.TRT_DTM, 'YYYYMMDD') AS TRT_DTM, (                  /*처리일시*/
+				SELECT B.ORG_NM                                               /*조직이름*/
+				  FROM EAGLE.TB_SAOGF01 B                                     /*조직기본*/
+					WHERE B.ORG_NO = A.UPP_ORG_NO                           
+					) AS UPP_ORG_NM                                           /*상위조직이름*/
+				FROM EAGLE.TB_SAOGF01 A                                       /*조직기본*/
+				WHERE A.ORG_TYP_CD ='99'                                    
+			    		AND A.CLOS_YMD = '99991231'                           
+			    		) A
+			WHERE 1=1
+				AND (A.UPP_ORG_NO LIKE '%'||#{orgNo}||'%'
+				OR A.ORG_NO LIKE '%'||#{orgNo}||'%' )  
+				AND (A.UPP_ORG_NM LIKE '%'||#{orgNm}||'%'
+				OR A.ORG_NM LIKE '%'||#{orgNm}||'%') 
+			 ]]>
+	</select>
+	
+	<!--TB_IMGSYF02(메뉴기본) 화면 조회 팝업 -->
+	<select id="searchMenu_Popup" parameterType="map" resultType="FwkMap">
+		<![CDATA[                      		
+       SELECT 			/*RoleMapper.searchMenu_Popup  화면 조회 팝업 */  
+       		ROW_NUMBER() OVER(ORDER BY MENU_LVL, UPP_MENU_ID, MENU_SEQ ASC) AS ROW_NUM,
+       		MENU_ID ,                                                                 /*메뉴아이디*/  
+			MENU_NM ,                                                                 /*메뉴명*/    
+			MENU_TYP_CD ,                                                             /*메뉴유형코드*/ 
+			USE_YN ,                                                                  /*사용여부*/   
+			MENU_SEQ ,                                                                /*메뉴순서*/   
+			MENU_LVL ,                                                                /*메뉴레벨*/   
+			UPP_MENU_ID ,                                                             /*상위메뉴ID*/ 
+			REGNT_ENO ,                                                               /*등록자사번*/  
+			TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                                  /*등록일시*/   
+			TRTR_ENO ,                                                                /*변경자사번*/  
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                                   /*변경일시*/   
+		FROM S_MG.TB_IMGSYF02                                                         /*메뉴관리기본*/ 
+			WHERE 1=1
+			AND UPPER(MENU_ID) LIKE UPPER('%'||#{menuId}||'%')
+			AND UPPER(MENU_NM) LIKE UPPER('%'||#{menuNm}||'%')
+			AND MENU_TYP_CD = '2'
+			AND ROWNUM <= 10001
+		 ]]>
+	</select>
+	
+</mapper>

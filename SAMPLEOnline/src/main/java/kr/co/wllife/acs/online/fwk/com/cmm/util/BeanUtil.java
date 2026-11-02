@@ -1,0 +1,47 @@
+package kr.co.wllife.acs.online.fwk.com.cmm.util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+*
+* 시스템에서 사용하는 Map관련 UTIL 클래스
+*
+* @author 	신예진
+* @since 	2018. 11. 26. 
+* @version 1.0
+* @see
+*
+*<pre>
+* << 개정이력(Modification Information) >>
+*
+*	     수정일		  수정자          			 수정내용
+*  -----------  -----   ---------------------------
+*  2018. 11. 26.  신예진       최초 생성
+*
+*</pre>
+*/
+public class BeanUtil {
+	/**
+	 * List<Map>에서 key값에 해당하는 데이터를 concatStr 구분자로 나열하여 리턴한다.
+	 * getMapToStringJoin 설명
+	 *
+	 * @param list
+	 * @param key
+	 * @param concatStr
+	 * @return
+	 */
+	public static Object getBean(String beanId){
+		
+		ApplicationContext applicationContext = kr.co.wllife.acs.online.fwk.com.cmm.util.ApplicationContextProvider.getApplicationContext();
+		
+		if(applicationContext == null){
+			return null;
+		}
+		return applicationContext.getBean(beanId);
+				
+	}
+}

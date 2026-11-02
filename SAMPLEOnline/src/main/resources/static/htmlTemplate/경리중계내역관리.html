@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+<!-- 팝업 -->
+<!-- 팝업 크기 가로1000px 띄워주세요~-->
+<div class="popupWrap-win">
+	<div class="popup_header">
+    	<h3>경리중계내역관리</h3>
+    </div>
+    <div class="popup_body">
+    	<h4>집계명세</h4>
+        <div class="tableWrap">
+            <table class="table-detail"> 
+              <colgroup>
+                <col width="13%">
+                <col width="12%">
+                <col width="13%">
+                <col width="12%">
+                <col width="13%">
+                <col width="12%">
+                <col width="12%">
+                <col width="*">
+              </colgroup>       
+              <tbody>
+                <tr>
+                  <th>집계명세 ID</th>
+                  <td colspan="8">
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>회계코드<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>업무분류<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>거래유형<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>금액구분<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>금액유형<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>금액유형 상세<span class="point">*</span></th>
+                  <td colspan="5">
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>발의일자<span class="point">*</span></th>
+                  <td>
+                    <div class="cal-group">
+                      <input type="text"  class="cal-input" style="width: 80px;">
+                      <button class="cal"><img src="../img/icon_cal.png"></button>
+                    </div>
+                  </td>
+                  <th>발의조직<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>담당자사번<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>통화<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>전표전송구분<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>온라인/배치<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                  <th>전표생성여부<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="checkbox" class="checkbox"><label>예</label>&nbsp;&nbsp;<input type="checkbox" class="checkbox"><label>아니오</label>
+                    </div>
+                  </td>
+                  <th>취소여부<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="checkbox" class="checkbox"><label>예</label>&nbsp;&nbsp;<input type="checkbox" class="checkbox"><label>아니오</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                 <th>건별취소여부<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="checkbox" class="checkbox"><label>예</label>&nbsp;&nbsp;<input type="checkbox" class="checkbox"><label>아니오</label>
+                    </div>
+                  </td>
+                  <th>정상취소거래<span class="point">*</span></th>
+                  <td>
+                    <div>
+                      <input type="text">
+                    </div>
+                  </td>
+                   <th>전표적요</th>
+                  <td colspan="3" >
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>등록자사번</th>
+                  <td>
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                  <th>등록일시</th>
+                  <td>
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                  <th>처리자 사번</th>
+                  <td>
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                  <th>처리일시</th>
+                  <td>
+                    <div>
+                      <input type="text" disabled>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        
+        <div>
+      <h4 class="mt10">경리중계명세</h4>
+      <div class="tableWrap">
+        <table class="tableA">
+          <thead>
+            <tr>
+              <th>마감년월</th>
+              <th>계약집합ID</th>
+              <th>포트폴리오 구분코드</th>
+              <th>거래화폐 변동금액</th>
+              <th>현지화폐 변동금액</th>
+              <th>경리배치키값</th>
+              <th>테이블명</th>
+              <th>컬럼명(*1)</th>
+              <th>전표전송구분코드</th>
+              <th>상태</th>
+              <th>분개오류코드</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tc">201901</td>
+              <td class="tc">SDTK_XXX_XXX</td>
+              <td class="tc">SDTK</td>
+              <td class="tr"></td>
+              <td class="tr"></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="clearfix mt50">
+        <div class="fr">
+          <span class="text">비밀번호</span>
+          <input type="text" class="wi180px" style="height:27px">
+          <button class="brown_btn"><span>수정</span></button>
+          <button class="brown_btn"><span>삭제</span></button>
+        </div>
+      </div>
+    </div>
+  
+</div>
+<!--// 팝업 -->
+
+</body>
+</html>

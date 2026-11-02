@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 1. 기존 application.properties에 있던 설정들 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+
+    <!-- 2. 타입 패키지 별칭 설정 -->
+    <typeAliases>
+        <package name="fwk.rte.psl.dataaccess.util"/>
+        <package name="kr.co.wllife.acs.online"/>
+    </typeAliases>
+
+    <!-- 3. CLOB 처리를 위한 타입 핸들러 -->
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.ClobTypeHandler" javaType="string" jdbcType="CLOB"/>
+    </typeHandlers>
+</configuration>

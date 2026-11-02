@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ABL</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+<link rel="stylesheet" type="text/css" media="all" href="../css/basic.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/style.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/gnb.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/xeicon.min.css">
+<link rel="stylesheet" type="text/css" media="all" href="../css/jquery.mCustomScrollbar.css" >
+<script type="text/javascript" src="../js/common/common.js"></script>
+<script type="text/javascript" src="../js/common/html5.js"></script>
+<script src="../js/jquery/jquery-1.12.4.js"></script>
+<script src="../js/jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/gnb/gnb.js"></script>
+</head>
+
+<body>
+
+<!-- content01-->
+  <div id="contentWrap" class="clearfix">
+    <div class="content_header">
+      <div class="main_title clearfix">
+        <h3 class="title">계약자이익배당금준비금 내역</h3>
+      </div>
+      
+      <!-- searchform -->
+      <div class="search-form-wrap">
+        <div class="search-item">
+          <div class="search-item-inner fixed">
+            <div class="item">
+              <p class="title">원수/재보험구분</p>
+              <div>
+                <select>
+                  <option></option>
+                </select>
+              </div>
+            </div>
+            <div class="item">
+              <p class="title">마감년월</p>
+              <div class="cal-group">
+                <input type="text"  class="cal-input" style="width: 80px;">
+                <button class="cal"><img src="../img/icon_cal.png"></button>
+              </div>
+            </div>            
+          </div>
+        </div>
+        <div class="search-item-btn"> <a href="javascript:void(0);"><i class="xi-search xi-x"></i> 조회</a> </div>
+      </div>
+      <!-- searchform // --> 
+    </div>
+    <!-- 원수보험 -->
+    <div class="btnWrap clearfix">
+      <h3 class="title fl">원수보험</h3>
+      <div class="fr">
+        <button class="btn-download"><span>엑셀다운로드</span></button>
+        <button class="btn-upload"><span>엑셀업로드</span></button>
+        <button class="btn-save"><span>저장</span></button>
+      </div>
+    </div>    
+    <div class="tableWrap">
+      <table class="tableA">      
+        <thead>
+          <tr>
+            <th>마감년월</th>
+            <th>계약번호</th>
+            <th>화폐코드</th>
+            <th>외화구분코드</th>
+            <th>전기말계약자<br/>이익배당준비금</th>
+            <th>계약자지분금액</th>
+            <th>과부족금액</th>
+            <th>선적립계약자<br/>배당금</th>
+            <th>당기말계약자<br/>이익배당준비금</th>
+            <th>계약자이익<br/>배당준비금_기시금액</th>
+            <th>계약자이익<br/>배당준비금_대체금액</th>
+            <th>계약자이익<br/>배당준비금_기말금액</th>
+            <th>계약자이익<br/>배당준비금_발생금액</th>
+            <th>등록자사번</th>
+            <th>등록일시</th>
+            <th>처리자사번</th>
+            <th>처리일시</th>
+            <th>상태</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2021-09</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>   
+    <!-- 원수보험//--> 
+    <div class="btnWrap clearfix">
+      <button class="btn-grid-add fr"><span>행추가</span></button>
+    </div>
+    
+    
+  </div>
+  <!-- content01//--> 
+</body>
+</html>

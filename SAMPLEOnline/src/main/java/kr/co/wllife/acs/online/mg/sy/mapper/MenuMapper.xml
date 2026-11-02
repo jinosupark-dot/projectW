@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wllife.acs.online.mg.sy.mapper.MenuMapper">
+	
+	<!-- 메뉴 관리(S_MG.TB_IMGSYF02) 상위 아이디로 하위 메뉴들을 조회 -->
+	<select id="selectMenuListByUppMenuId" parameterType="map" resultType="FwkMap">
+		<![CDATA[                              		
+		SELECT			/*MenuMapper.selectMenuListByUppMenuId  상위 아이디로 하위 메뉴들을 조회 */  
+			MENU_ID ,												/*메뉴아이디*/
+			MENU_NM ,                                               /*메뉴명*/  
+			MENU_TYP_CD ,                                           /*메뉴유형코드*/  
+			USE_YN ,                                                /*사용여부*/  
+			MENU_SEQ ,                                              /*메뉴순서*/  
+			MENU_LVL ,                                              /*메뉴레벨*/  
+			UPP_MENU_ID ,                                           /*상위메뉴ID*/  
+			REGNT_ENO ,                                             /*등록자사번*/  
+			TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                /*등록일시*/  
+			TRTR_ENO ,                                              /*변경자사번*/  
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                 /*변경일시*/  
+		FROM S_MG.TB_IMGSYF02                                       /*메뉴관리기본*/  
+		WHERE UPP_MENU_ID= #{menuId}
+		ORDER BY MENU_LVL, UPP_MENU_ID, MENU_SEQ ASC
+		]]>
+	</select>
+	
+	<!-- 메뉴 관리(S_MG.TB_IMGSYF02) 메뉴 조회 -->
+	<select id="selectMenuList" parameterType="map" resultType="FwkMap">
+		<![CDATA[                              		
+		SELECT            	/*MenuMapper.selectMenuListByUppMenuId  상위 아이디로 하위 메뉴들을 조회 */                                               
+			MENU_ID ,                                               /*메뉴아이디*/  
+			MENU_NM ,                                                /*메뉴명*/    
+			MENU_TYP_CD ,                                            /*메뉴유형코드*/ 
+			USE_YN ,                                                 /*사용여부*/   
+			MENU_SEQ ,                                               /*메뉴순서*/   
+			MENU_LVL ,                                               /*메뉴레벨*/   
+			UPP_MENU_ID ,                                            /*상위메뉴ID*/ 
+			REGNT_ENO ,                                              /*등록자사번*/  
+			TO_CHAR(REG_DTM, 'YYYYMMDD') AS REG_DTM,                 /*등록일시*/   
+			TRTR_ENO ,                                               /*변경자사번*/  
+			TO_CHAR(TRT_DTM, 'YYYYMMDD') AS TRT_DTM                  /*변경일시*/   
+		FROM S_MG.TB_IMGSYF02                                        /*메뉴관리기본*/  
+		ORDER BY MENU_LVL, UPP_MENU_ID, MENU_SEQ ASC
+		]]>
+	</select>
+	
+	<!-- 메뉴 관리(S_MG.TB_IMGSYF02) 메뉴 추가-->
+	<insert id="insertMenuInfo" parameterType="map">
+		<![CDATA[                              		
+		INSERT /*MenuMapper.insertMenuInfo  메뉴 추가- */ 
+		INTO S_MG.TB_IMGSYF02	/*메뉴관리기본*/      	       
+		( MENU_ID ,                                           /*메뉴아이디*/  
+		MENU_NM ,                                              /*메뉴명*/    
+		MENU_TYP_CD ,                                          /*메뉴유형코드*/ 
+		USE_YN ,                                               /*사용여부*/   
+		MENU_SEQ ,                                             /*메뉴순서*/   
+		MENU_LVL ,                                             /*메뉴레벨*/   
+		UPP_MENU_ID ,                                          /*상위메뉴ID*/ 
+		REGNT_ENO ,                                            /*등록자사번*/  
+		REG_DTM ,                                              /*등록일시*/   
+		TRTR_ENO,                                              /*변경자사번*/  
+		TRT_DTM )                                              /*변경일시*/   
+		VALUES
+		( 
+		#{menuId} ,
+		#{menuNm} ,
+		#{menuTypCd} ,
+		#{useYn} ,
+		#{menuSeq} ,
+		#{menuLvl} ,
+		#{uppMenuId} ,
+		#{regntEno} ,
+		CURRENT_TIMESTAMP ,
+		#{trtrEno} ,
+		CURRENT_TIMESTAMP )
+		]]>
+	</insert>
+	
+	<!-- 메뉴 관리(S_MG.TB_IMGSYF02) 메뉴 수정-->
+	<update id="updateMenuInfo" parameterType="map">
+		<![CDATA[                              		
+		UPDATE /*MenuMapper.updateMenuInfo  메뉴 수정*/  
+		S_MG.TB_IMGSYF02	/*메뉴관리기본*/  			 
+		SET 
+			MENU_ID = #{menuId} ,                                        /*메뉴아이디*/
+			MENU_NM = #{menuNm} ,                                        /*메뉴명*/
+			MENU_TYP_CD = #{menuTypCd} ,                                 /*메뉴유형코드*/
+			USE_YN = #{useYn} ,                                          /*사용여부*/
+			MENU_SEQ = #{menuSeq} ,                                      /*메뉴순서*/
+			MENU_LVL = #{menuLvl} ,                                      /*메뉴레벨*/
+			UPP_MENU_ID = #{uppMenuId} ,                                 /*상위메뉴ID*/
+			TRTR_ENO = #{trtrEno} ,                                      /*변경자사번*/
+			TRT_DTM = CURRENT_TIMESTAMP                                  /*변경일시*/
+		WHERE MENU_ID= #{menuId}
+		]]>
+	</update>
+
+	<!--메뉴 관리(S_MG.TB_IMGSYF02) 메뉴 삭제-->
+	<delete id="deleteMenuInfo" parameterType="map">
+		<![CDATA[                       		
+		DELETE FROM              /*MenuMapper.deleteMenuInfo  메뉴 삭제*/   
+		S_MG.TB_IMGSYF02	/*메뉴관리기본*/  
+		WHERE MENU_ID = #{menuId}                                /*메뉴아이디*/  
+		]]>
+	</delete>
+	
+	<!-- 메뉴 관리(S_MG.TB_IMGSYF02) TB_IMGSYF03 (역할기본) ,TB_IMGSYF04 (역할별 사용자) ,TB_IMGSYF05 (역할별 화면),TB_IMGSYF06 (역할별 부서) 에 따른 메뉴 조회-->
+	<select id="selectMenuListByAuth" parameterType="map" resultType="FwkMap">
+		<![CDATA[                              		
+		SELECT 				/*MenuMapper.selectMenuListByAuth  권한에 따른 메뉴 조회*/  
+				  MENU_ID                                                 /*메뉴아이디*/ 
+				  ,MENU_NM                                                /*메뉴명*/   
+				  ,MENU_TYP_CD                                            /*메뉴유형코드*/
+				  ,USE_YN                                                 /*사용여부*/  
+				  ,MENU_SEQ                                               /*메뉴순서*/  
+				  ,MENU_LVL                                               /*메뉴레벨*/  
+				  ,UPP_MENU_ID                                            /*상위메뉴ID*/
+				  ,MAX(NVL(MDFC_PSB_YN,'N')) AS MDFC_PSB_YN               /*수정권한여부*/                          
+		FROM
+		    --역할별 사용자 메뉴
+		    (SELECT                                                       /*메뉴아이디*/  
+				  AA.MENU_ID                                              /*메뉴명*/    
+				  ,AA.MENU_NM                                             /*메뉴유형코드*/ 
+				  ,AA.MENU_TYP_CD                                         /*사용여부*/   
+				  ,AA.USE_YN                                              /*메뉴순서*/   
+				  ,AA.MENU_SEQ                                            /*메뉴레벨*/   
+				  ,AA.MENU_LVL                                            /*상위메뉴ID*/ 
+				  ,AA.UPP_MENU_ID                                         /*수정권한여부*/ 
+				  ,BB.MDFC_PSB_YN AS MDFC_PSB_YN
+				FROM S_MG.TB_IMGSYF02 AA	/* 메뉴관리기본 */                                                                    
+				LEFT OUTER JOIN (SELECT B.AUTH_ROL_ID                                            /*권한역할ID*/  
+                                      ,C.MENU_ID                                                 /*메뉴ID*/    
+                                      ,B.MDFC_PSB_YN                                             /*수정권한여부*/  
+                                   FROM S_MG.TB_IMGSYF03 A                                       /*역할기본 테이블*/
+                                      , S_MG.TB_IMGSYF04 B                                       /*역할별사용자기본*/
+                                      , S_MG.TB_IMGSYF05 C                                       /*역할별메뉴기본*/ 
+                                  WHERE A.AUTH_GRP_TYP_CD = '2' --역할                              					                /*권한그룹유형코드*/ 
+                                    AND A.AUTH_GRP_ID = B.AUTH_ROL_ID                                             /*권한그룹ID*/   
+                                    AND B.USER_ID = #{userId}                                                     /*사용자ID*/ 
+                                    AND B.AUTH_RET_YN = 'Y'                                                      /*권한보유여부*/
+                                    AND A.AUTH_GRP_ID = C.AUTH_ROL_ID                                            /*권한그룹ID*/ 
+                                ) BB
+                 ON AA.MENU_ID = BB.MENU_ID
+				WHERE 1=1                                               
+				AND AA.USE_YN = 'Y'                                                                /*사용여부*/
+				START WITH AA.MENU_ID IN (SELECT                                                    /*메뉴ID*/
+				            C.MENU_ID                                                               /*메뉴ID*/
+				        FROM S_MG.TB_IMGSYF03 A                                                     /*역할기본 테이블*/
+				        	,S_MG.TB_IMGSYF04 B                                                     /*역할별사용자기본*/
+				        	,S_MG.TB_IMGSYF05 C                                                     /*역할별메뉴기본*/ 
+				        WHERE A.AUTH_GRP_TYP_CD = '2' --역할                      			        
+				        AND A.AUTH_GRP_ID = B.AUTH_ROL_ID                                            
+				        AND B.USER_ID = #{userId}                                                     
+                        AND B.AUTH_RET_YN = 'Y'                                                       
+				        AND A.AUTH_GRP_ID = C.AUTH_ROL_ID                                            
+				    )                                                   
+				CONNECT BY PRIOR AA.UPP_MENU_ID = AA.MENU_ID            
+				
+				UNION ALL
+				
+				--역할별 조직 메뉴
+				SELECT                                                  
+				  AA.MENU_ID                                                                /*메뉴아이디*/   
+				  ,AA.MENU_NM                                                               /*메뉴명*/     
+				  ,AA.MENU_TYP_CD                                                           /*메뉴유형코드*/  
+				  ,AA.USE_YN                                                                /*사용여부*/    
+				  ,AA.MENU_SEQ                                                              /*메뉴순서*/    
+				  ,AA.MENU_LVL                                                              /*메뉴레벨*/    
+				  ,AA.UPP_MENU_ID                                                           /*상위메뉴ID*/  
+				  ,'N' AS MDFC_PSB_YN                                                       /*수정권한여부*/  
+				FROM S_MG.TB_IMGSYF02 AA	/* 메뉴관리기본 */                                    
+				WHERE 1=1                                               
+				AND AA.USE_YN = 'Y'                                        
+				START WITH MENU_ID IN (SELECT C.MENU_ID                                   
+				                         FROM S_MG.TB_IMGSYF03 A	/*역할기본 테이블*/
+				                            , S_MG.TB_IMGSYF06 B    /*역할자동부여기본*/
+				                            , S_MG.TB_IMGSYF05 C    /*역할별메뉴기본*/ 
+				                        WHERE A.AUTH_GRP_TYP_CD = '2' --역할              
+				                          AND A.AUTH_GRP_ID = B.AUTH_ROL_ID               
+				                          AND B.ORG_CD = #{orgNo}                         
+				                          AND A.AUTH_GRP_ID = C.AUTH_ROL_ID               
+				                       )                                                   
+				CONNECT BY PRIOR AA.UPP_MENU_ID = AA.MENU_ID     
+		)		
+		GROUP BY MENU_ID ,MENU_NM ,MENU_TYP_CD, USE_YN, MENU_SEQ, MENU_LVL, UPP_MENU_ID                                          
+		ORDER BY MENU_LVL, UPP_MENU_ID, MENU_SEQ ASC       
+		             
+		]]>
+	</select>
+	
+	<!--TB_IMGSYF02 (메뉴 관리)메뉴 하위 메뉴/화면들의 useYn 을 일괄 변경-->
+	<update id="updateSubMenuList" parameterType="map" >
+		<![CDATA[                              		
+	 	UPDATE /*MenuMapper.updateSubMenuList  하위 메뉴/화면들의 useYn 을 일괄 변경*/ 
+	 	S_MG.TB_IMGSYF02	/* 메뉴관리기본 */    	    
+			SET USE_YN = #{useYn}                                          /*사용여부*/
+				,TRTR_ENO = #{trtrEno}                                     /*처리자사번*/  
+				,TRT_DTM = CURRENT_TIMESTAMP                               /*처리일시*/
+	        WHERE 1=1
+	        AND UPPER(UPP_MENU_ID) LIKE UPPER(#{menuId}||'%')
+		]]>
+	</update>
+	
+	<!--TB_IMGSYF02 (메뉴 관리)메뉴 하위 메뉴/화면들을 일괄 삭제-->
+	<delete id="deleteMenuInfoByMenu" parameterType="map" >
+		<![CDATA[                              		
+	 	DELETE /*MenuMapper.deleteMenuInfoByMenu  상위 하위 메뉴/화면들을 일괄 삭제 */
+	 	FROM S_MG.TB_IMGSYF02	/* 메뉴관리기본 */  
+	 	WHERE 1=1
+	        AND UPPER(UPP_MENU_ID) LIKE UPPER(#{menuId}||'%')                     /*상위메뉴아이디*/
+		]]>
+		</delete>
+</mapper>

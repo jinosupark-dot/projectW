@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+    version="2.1">
+
+	<description>CUSTOM TAG</description>
+  	<display-name>ZTAG</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>ztag</short-name>
+    
+    <tag>
+    	<description>
+        <![CDATA[
+        JS FileVersion Tag.
+        &#xA;&#xA;
+		정적파일의 캐쉬리로드문제를 해결하기 위해 properties에
+		&#xA;
+		선언된 version 파라미터값을 붙여 스크립트를 생성
+		&#xA;&#xA;
+		ex)	<ztag:js value="/js/core/jquery/jquery-2.1.1.min.js"/>&#xA;
+		EL, <%=%> 또는 문자열을 value 세팅
+		&#xA;&#xA;
+		charset 설정시 charset="utf-8" 처리
+		&#xA;&#xA;
+		defer, async 옵션 생성가능 true/false
+        ]]>
+        </description>
+        <name>js</name>
+        <tag-class>kr.co.wllife.acs.online.fwk.com.cmm.tag.JsTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>type</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <!-- value 실제 배포시 할당되는 url 정보가 아닌 개발용으로 쓰이는 url 값 -->
+        <!-- <attribute>
+            <name>devonlyurl</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute> -->
+        <!-- <script> tag 기본속성 -->
+        <attribute>
+        	<description>true/false</description>
+            <name>defer</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>boolean</type>
+        </attribute>
+        <attribute>
+        	<description>true/false</description>
+            <name>async</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>boolean</type>
+        </attribute>
+        <attribute>
+            <name>charset</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <tag>
+    	<description>
+        <![CDATA[
+        CSS FileVersion Tag.
+        &#xA;&#xA;
+		정적파일의 캐쉬리로드문제를 해결하기 위해 properties에
+		&#xA;
+		선언된 version 파라미터값을 붙여 스크립트를 생성
+		&#xA;&#xA;
+		ex)	<ztag:css value="/css/fwk/egov.css"/>
+		&#xA;
+		EL, <%=%> 또는 문자열을 value 세팅
+        ]]>
+        </description>
+        <name>css</name>
+        <tag-class>kr.co.wllife.acs.online.fwk.com.cmm.tag.CssTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>sheet</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>
