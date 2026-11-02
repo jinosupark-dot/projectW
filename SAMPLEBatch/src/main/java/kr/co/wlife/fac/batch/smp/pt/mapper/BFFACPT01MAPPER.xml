@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wlife.fac.batch.smp.pt.mapper.BFFACPT01MAPPER">
+
+
+    <!-- ===================================================== -->
+    <!-- 1. Partition : 분할 기준 범위 조회                    -->
+    <!-- ===================================================== -->
+    <select id="selectPartitionRange" resultType="kr.co.wlife.fac.batch.smp.pt.vo.BFFACPT01DTO$selectPartitionRangeVO">
+        SELECT /* selectPartitionRange 정보 조회 */
+                  MIN(FRUIT_ID) AS MIN_ID
+                , MAX(FRUIT_ID) AS MAX_ID
+          FROM T_FRUIT_SOURCE
+    </select>
+
+    <!-- ===================================================== -->
+    <!-- 2. Partition : 범위별 Reader (Cursor)                 -->
+    <!--    fetchSize 를 키워야 Oracle 기본값(10)보다 빠름     -->
+    <!--    ORDER BY 는 재시작 시 읽기 순서 보장을 위해 필수   -->
+    <!-- ===================================================== -->
+    <select id="selectFruitSourceByRange"
+            resultType="kr.co.wlife.fac.batch.smp.pt.vo.BFFACPT01DTO$selectFruitSourceListVO"
+            fetchSize="1000">
+        SELECT /* selectFruitSourceByRange 범위별 조회 */
+                  FRUIT_ID
+                , FRUIT_NAME
+                , FRUIT_COLOR
+                , FRUIT_QTY
+          FROM T_FRUIT_SOURCE
+         WHERE FRUIT_ID BETWEEN #{minId} AND #{maxId}
+         ORDER BY FRUIT_ID
+    </select>
+
+    <!-- ===================================================== -->
+    <!-- 3. Partition : Writer (JDBC Batch 단건 insert)        -->
+    <!--    파라미터는 FruitTargetVO 를 그대로 받음(#{fruitName}) -->
+    <!-- ===================================================== -->
+    <insert id="insertFruitTargetPartition">
+        INSERT  /* insertFruitTargetPartition 정보 생성 */
+          INTO T_FRUIT_TARGET
+            (
+              TARGET_ID
+            , TARGET_NAME
+            , PROCESSED_AT
+            , FRUIT_QTY
+            , STATUS
+            )
+       VALUES
+            (
+              SEQ_T_FRUIT_TARGET.NEXTVAL
+            , #{fruitName, jdbcType=VARCHAR}
+            , SYSDATE
+            , #{fruitQty,  jdbcType=INTEGER}
+            , #{status,    jdbcType=VARCHAR}
+            )
+    </insert>
+
+</mapper>

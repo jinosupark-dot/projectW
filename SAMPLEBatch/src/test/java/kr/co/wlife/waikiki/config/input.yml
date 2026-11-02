@@ -1,0 +1,5 @@
+job_id : TEST04
+colums : fruit_qty, fruit_color
+table_name_source : t_fruit_source
+table_name_target : t_fruit_target
+package_directory : asm/journalrule

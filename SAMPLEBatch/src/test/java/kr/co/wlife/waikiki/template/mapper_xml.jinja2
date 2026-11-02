@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="{{ package_name }}.mapper.{{ job_id }}MAPPER">
+
+    <insert id="insert{{ job_id }}">
+        INSERT INTO {{ table_name_target }} (
+            {{ columns | join(', ') }}
+        )
+        SELECT
+            {{ columns | join(', ') }}
+        FROM {{ table_name_source }}
+    </insert>
+
+</mapper>

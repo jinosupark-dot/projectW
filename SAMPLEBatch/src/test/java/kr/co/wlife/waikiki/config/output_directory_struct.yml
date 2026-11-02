@@ -1,0 +1,5 @@
+bean        : /d/tmp/waikiki_output/{package_directory}/bean/{job_id}B01BEAN.java
+job         : /d/tmp/waikiki_output/{package_directory}/jobs/{job_id}B.java
+mapper_java : /d/tmp/waikiki_output/{package_directory}/mapper/{job_id}MAPPER.java
+mapper_xml  : /d/tmp/waikiki_output/{package_directory}/mapper/{job_id}MAPPER.xml
+vo          : /d/tmp/waikiki_output/{package_directory}/vo/{job_id}DTO.java

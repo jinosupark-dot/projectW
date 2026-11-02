@@ -1,0 +1,7 @@
+package {{ package_name }}.vo;
+
+public class {{ job_id }}DTO {
+{%- for f in fields %}
+    private String {{ f.property }}; // {{ f.column }}
+{%- endfor %}
+}

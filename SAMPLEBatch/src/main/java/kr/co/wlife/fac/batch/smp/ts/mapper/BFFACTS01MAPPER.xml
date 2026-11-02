@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wlife.fac.batch.smp.ts.mapper.BFFACTS01MAPPER">  
+	
+	<!--  거래정보 삭제  -->
+    <delete id="deleteTBPSB0016ByAncmAtfIdList">
+        DELETE /* BFFACTS01MAPPER.deleteTBPSB0016ByAncmAtfIdList 거래정보 삭제 */
+		  FROM BIZ_USER.TBPSB0016
+         WHERE 1=1
+		   AND ANCM_NTF_ID LIKE #{ancmAtfId}||'%'
+    </delete>
+    
+    
+    <!-- 기본 예제 Sample 데이터 일괄 입력-->
+    <insert id="insertTBPSB0016List">
+        INSERT /* BFFACTS01MAPPER.insertTBPSB0016List 기본 예제 Sample 데이터 일괄 입력 */
+          INTO BIZ_USER.TBPSB0016
+             (
+               SEQ
+		     , ANCM_NTF_ID
+		     , TITL
+		     , CONT
+		     , IQCNT
+		     , IPDTM
+		     , INPP_CD
+             )
+        SELECT 
+               SEQ_T_FRUIT_TARGET.NEXTVAL
+             , ANCM_NTF_ID
+             , TITL
+             , CONT
+             , IQCNT
+             , sysdate
+             , INPP_CD
+          FROM BIZ_USER.TBPSB0015
+         WHERE ANCM_NTF_ID LIKE #{ancmAtfId}||'%'
+    </insert>
+
+</mapper>

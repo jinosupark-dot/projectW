@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wlife.fac.batch.smp.dd.mapper.BFFACDD01MAPPER">
+
+    <!-- 기본 예제                                                -->
+    <select id="selectTest01List" resultType="kr.co.wlife.fac.batch.smp.dd.vo.BFFACDD01DTO$selectTest01ListVO">
+        SELECT /* BFFACDD01MAPPER.selectTest01List */ COL1
+          FROM T_TEST1
+    </select>
+
+    <!-- 기본 예제 Sample 데이터 입력-->
+    <insert id="insertTestItem">
+        INSERT /* BFFACDD01MAPPER.insertTestItem */
+          INTO T_TEST2
+              (
+               ID
+              , COL1
+              , PROCESSED_AT
+              VO
+        VALUES
+              (
+               T_TEST2_SEQ.NEXTVAL
+              , #{item.col1}
+              , SYSDATE
+              )
+    </insert>
+
+    <!-- 1. 동적 조건절:  <if>                            -->
+    <select id="selectFruitSource" resultType="kr.co.wlife.fac.batch.smp.dd.vo.BFFACDD01DTO$selectFruitSourceListVO">
+        SELECT /*  BFFACDD01MAPPER.selectFruitSource */
+               FRUIT_ID
+             , FRUIT_NAME
+             , FRUIT_COLOR
+             , FRUIT_QTY
+        FROM T_FRUIT_SOURCE
+		WHERE 1=1
+            <if test="fruitColor != null and fruitColor != ''">
+                AND FRUIT_COLOR = #{fruitColor}
+            </if>
+            <if test="fruitQty != null">
+                AND FRUIT_QTY &gt;= #{fruitQty}
+            </if>
+    </select>
+
+    <!-- 3. 기본 예제 Sample Update / Delete                                     -->
+    <update id="updateFruitStatus">
+        UPDATE T_FRUIT_TARGET /*  BFFACDD01MAPPER.updateFruitStatus */
+        SET STATUS = #{item.status}
+          , UPDATED_AT = SYSDATE
+        WHERE TARGET_ID = #{item.targetId}
+    </update>
+
+    <!-- 3. 기본 예제 Sample  Delete                                     -->
+    <delete id="deleteOldFruitTarget">
+        DELETE /*  BFFACDD01MAPPER.deleteOldFruitTarget */ FROM T_FRUIT_TARGET
+         WHERE processed_at &lt; #{cutoffDate}
+    </delete>
+
+    <!-- 4. foreach IN절: 다건 조회/필터링                          -->
+    <select id="selectFruitSourceByIds" resultType="kr.co.wlife.fac.batch.smp.dd.vo.BFFACDD01DTO$selectFruitSourceListVO">
+        SELECT /*  BFFACDD01MAPPER.selectFruitSourceByIds */
+               FRUIT_ID
+             , FRUIT_NAME
+             , FRUIT_COLOR
+             , FRUIT_QTY
+        FROM T_FRUIT_SOURCE
+        WHERE FRUIT_ID IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 기본 예제 Sample 데이터 입력-->
+    <insert id="insertFruitTarget">
+		INSERT/* iBFFACDD01MAPPER.nsertFruitTarget */  INTO T_FRUIT_TARGET (
+              TARGET_ID
+            , TARGET_NAME
+            , FRUIT_QTY
+            , PROCESSED_AT
+            , STATUS
+        )
+		VALUES(
+			  SEQ_T_FRUIT_TARGET.NEXTVAL
+			, #{item.fruitName, jdbcType=VARCHAR}
+			, #{item.fruitQty, jdbcType=INTEGER}
+			, SYSDATE
+            , #{item.status, jdbcType=VARCHAR}
+        )
+    </insert>
+
+</mapper>

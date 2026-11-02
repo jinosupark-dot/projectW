@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.wlife.fac.batch.smp.dd.mapper.BFFACDD02MAPPER">
+    
+    <!-- 기본 예제 Sample 목록 조회-->
+    <select id="selectSample01List" resultType="kr.co.wlife.fac.batch.smp.dd.vo.BFFACDD02DTO$selectSample01ListVO">
+		SELECT /* BFFACDD02MAPPER.selectTest01List - 기본 예제 Sample 목록 조회*/
+		       ANCM_NTF_ID
+		     , TITL
+		     , CONT
+		     , IQCNT
+		     , IPDTM
+		     , INPP_CD
+		  FROM BIZ_USER.TBPSB0015
+		 WHERE ANCM_NTF_ID LIKE #{ancmAtfId}||'%'
+    </select>
+
+    <!-- 기본 예제 Sample 데이터 입력-->
+    <insert id="insertSample02Info">
+        INSERT /* BFFACDD02MAPPER.insertSample02Info - 기본 예제 Sample 데이터 입력*/
+          INTO BIZ_USER.TBPSB0016
+             (
+               SEQ
+		     , ANCM_NTF_ID
+		     , TITL
+		     , CONT
+		     , IQCNT
+		     , IPDTM
+		     , INPP_CD
+             )
+        VALUES
+             (
+               SEQ_T_FRUIT_TARGET.NEXTVAL
+             , #{item.ancmNtfId}
+             , #{item.titl}
+		     , #{item.cont}
+		     , #{item.iqCnt}
+		     , SYSDATE
+		     , #{item.inppCd}
+             )
+    </insert>
+   
+    <!-- 기본 예제 selectSample01Info -->
+    <select id="selectSample01Info"  resultType="kr.co.wlife.fac.batch.smp.dd.vo.BFFACDD02DTO$selectSample01ListVO">
+        SELECT /* BFFACDD02MAPPER.selectSample01Info */
+		       ANCM_NTF_ID
+		     , TITL
+		     , CONT
+          FROM BIZ_USER.TBPSB0015
+    	WHERE ANCM_NTF_ID = #{ancmNtfId}
+    </select>
+ 
+    <!-- 기본 예제 updateSample01Info -->
+    <update id="updateSample01Info">
+    	UPDATE /* BFFACDD02MAPPER.updateSample01Info */ BIZ_USER.TBPSB0015 
+    	       SET INPP_CD='NEW_INPP_CD' 
+    	           , IPDTM = SYSDATE
+    	 WHERE ANCM_NTF_ID = #{item.ancmNtfId}
+    </update>
+</mapper>
